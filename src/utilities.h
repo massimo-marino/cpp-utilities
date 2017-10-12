@@ -8,6 +8,8 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#include "objectFactory.h"
+
 #include <iostream>
 #include <sstream>
 #include <experimental/string_view>
@@ -268,6 +270,7 @@ struct perftimer
     return std::chrono::duration_cast<Time>(end - start);
   }
 };
+
 ////////////////////////////////////////////////////////////////////////////////
 }  // namespace utilities
 ////////////////////////////////////////////////////////////////////////////////
