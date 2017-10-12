@@ -1,6 +1,6 @@
 # utilities
 
-A set of CPP1z (CPP17) utilities.
+A set of C++1z (C++17) utilities.
 
 ## Requirements
 
