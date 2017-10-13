@@ -9,6 +9,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <experimental/string_view>
+
 using namespace ::testing;
 using namespace std::experimental;
 

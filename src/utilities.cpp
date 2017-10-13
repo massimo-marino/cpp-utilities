@@ -9,30 +9,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
-////////////////////////////////////////////////////////////////////////////////
-// helpers for concurrent logging
-pclog::~pclog()
-{
-  std::lock_guard<std::mutex> lg {clog_mutex};
-  std::clog << rdbuf();
-  std::clog.flush();
-}
-
-pcout::~pcout()
-{
-  std::lock_guard<std::mutex> lg {cout_mutex};
-  std::cout << rdbuf();
-  std::cout.flush();
-}
-
-pcerr::~pcerr()
-{
-  std::lock_guard<std::mutex> lg {cerr_mutex};
-  std::cerr << rdbuf();
-  std::cerr.flush();
-}
-////////////////////////////////////////////////////////////////////////////////
-
 void yieldCPUAndSleep (const int64_t& nanoseconds) noexcept
 {
   std::this_thread::yield();
