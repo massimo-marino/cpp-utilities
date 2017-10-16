@@ -40,6 +40,15 @@ auto createObjectFactoryFun(Args&&... args) noexcept -> objectFactoryFun<T>
          };
 }
 
+template <typename T>
+std::shared_ptr<T> uniquePtr2sharedPtr(std::unique_ptr<T>& uptr) noexcept
+{
+  if (uptr)
+  {
+    return std::shared_ptr<T>(uptr.release());
+  }
+  return nullptr;
+}
 ////////////////////////////////////////////////////////////////////////////////
 }  // namespace utilities::object_factory
 #endif /* OBJECTFACTORY_H */

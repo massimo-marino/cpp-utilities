@@ -13,9 +13,11 @@
 
 using namespace ::testing;
 using namespace std::experimental;
+using namespace std::string_literals;
 
 // BEGIN: ignore the warnings listed below when compiled with clang from here
 #pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-member-function"
 #pragma clang diagnostic ignored "-Wexit-time-destructors"
 #pragma clang diagnostic ignored "-Wglobal-constructors"
 #pragma clang diagnostic ignored "-Wc++98-compat-bind-to-temporary-copy"
@@ -119,7 +121,7 @@ TEST(withinHelper, test_within)
                                      static_cast<string_view>("ee"),
                                      static_cast<string_view>("cc"),
                                      static_cast<string_view>("bb"),
-                                     static_cast<std::string>("ff"),
+                                     "ff"s,
                                      static_cast<string_view>("dd")));
 
 }
@@ -561,6 +563,232 @@ TEST (objectFactory, test_1)
   }  // the objects in the vector v are destroyed, going out of scope
 }
 
+TEST(uniquePtr2sharedPtr, test_1)
+{
+  class A
+  {
+    mutable int _x{};
+    mutable int _y{};
+    mutable int _z{};
+
+   public:
+    explicit
+    A() noexcept
+    {
+      std::cout << "default constructor A(): ";
+      display_object();
+    }
+
+    explicit
+    A(const int& x) noexcept
+    :
+    _x(x)
+    {
+      std::cout << "constructor-1 A(x): ";
+      display_object();
+    }
+
+    explicit
+    A(const int& x, const int& y) noexcept
+    :
+    _x(x),
+    _y(y)
+    {
+      std::cout << "constructor-2 A(x, y): ";
+      display_object();
+    }
+
+    explicit
+    A(const int& x, const int& y, const int& z) noexcept
+    :
+    _x(x),
+    _y(y),
+    _z(z)
+    {
+      std::cout << "constructor-3 A(x, y, z): ";
+      display_object();
+    }
+
+    int get_x() const noexcept
+    {
+      return _x;
+    }
+    int get_y() const noexcept
+    {
+      return _y;
+    }
+    int get_z() const noexcept
+    {
+      return _z;
+    }
+
+    void display_object (const std::string& prompt = "") const noexcept
+    {
+      std::cout << prompt
+                << "(x, y, z): ("
+                << get_x()
+                << ", "
+                << get_y()
+                << ", "
+                << get_z()
+                << ")"
+                << std::endl;
+    }
+
+    A(const A& rhs) = delete;
+    A& operator=(const A& rhs) = delete;
+
+    ~A()
+    {
+      std::cout << "Destroyed object: ";
+      display_object();
+    }
+  };  // class A
+
+  // create a unique_ptr that points to an A's object created using the object factory
+  std::unique_ptr<A> uptr = utilities::object_factory::createUniquePtr<A>(11, 22, 33);
+  uptr.get()->display_object("Object pointed by uptr: ");
+  ASSERT_NE(nullptr, uptr.get());
+  ASSERT_EQ(true, static_cast<bool>((uptr)));
+  ASSERT_EQ(true, uptr.operator bool());
+  ASSERT_EQ(11, uptr.get()->get_x());
+  ASSERT_EQ(22, uptr.get()->get_y());
+  ASSERT_EQ(33, uptr.get()->get_z());
+
+  // create a shared pointer to the object: don't try to access the unique_ptr from now on
+  std::shared_ptr<A> shptr {utilities::object_factory::uniquePtr2sharedPtr(uptr)};
+  // display the object pointed by the shared pointer
+  shptr.get()->display_object("Object pointed by shptr: ");
+
+  // now uptr.get() returns nullptr
+  ASSERT_EQ(nullptr, uptr.get());
+  ASSERT_EQ(false, static_cast<bool>((uptr)));
+  ASSERT_EQ(false, uptr.operator bool());
+  // the shared pointer must contain the moved data
+  ASSERT_EQ(11, shptr.get()->get_x());
+  ASSERT_EQ(22, shptr.get()->get_y());
+  ASSERT_EQ(33, shptr.get()->get_z());
+  ASSERT_EQ(1, shptr.use_count());
+  ASSERT_EQ(true, shptr.unique());
+  
+  // create a shared pointer from an invalid unique_ptr
+  std::shared_ptr<A> shptrBad {utilities::object_factory::uniquePtr2sharedPtr(uptr)};
+  // the shared pointer must be nullptr
+  ASSERT_EQ(nullptr, shptrBad.get());
+  ASSERT_EQ(false, static_cast<bool>((shptrBad)));
+  ASSERT_EQ(false, shptrBad.operator bool());
+}
+
+TEST(memVarTest, test_1)
+{
+  EXPECT_THROW(utilities::memvar<int> mv(0,0), std::invalid_argument);
+  EXPECT_THROW(utilities::memvar<int> mv(0,-10), std::invalid_argument);
+  EXPECT_NO_THROW(utilities::memvar<int> mv{});
+  EXPECT_NO_THROW(utilities::memvar<int> mv());
+  EXPECT_NO_THROW(utilities::memvar<int> mv(11, 20));
+}
+
+TEST(memVarTest, test_2)
+{
+  utilities::memvar<int> mv{};
+  ASSERT_EQ(10, mv.getHistCapacity());
+  mv.printHistData();
+  ASSERT_EQ(int{}, mv());
+  
+  int v = mv();
+  ASSERT_EQ(int{}, v);
+  ASSERT_EQ(0, v);
+  
+  v = 123;
+  ASSERT_NE(int{}, v);
+  ASSERT_NE(v, mv());
+
+  int w = mv();
+  ASSERT_EQ(int{}, w);
+  ASSERT_EQ(0, w);
+}
+
+TEST(memVarTest, test_3)
+{
+  utilities::memvar<int> mv{55};
+  mv.printHistData();
+  ASSERT_EQ(55, mv());
+
+  int v = mv();
+  ASSERT_EQ(55, v);
+
+  v = 123;
+  ASSERT_NE(55, v);
+  ASSERT_NE(v, mv());
+
+  int w = mv();
+  ASSERT_EQ(55, w);
+}
+
+TEST(memVarTest, test_4)
+{
+  utilities::memvar<int> mv(33,9);
+  ASSERT_EQ(9, mv.getHistCapacity());
+
+  ASSERT_EQ(33, mv());
+
+  mv = 78;
+  mv.printHistData();
+
+  ASSERT_EQ(78, mv());
+
+  mv = 45;
+  mv.printHistData();
+
+  ASSERT_EQ(45, mv());
+
+  ++mv;
+  mv.printHistData();
+
+  ASSERT_EQ(46, mv());
+
+  mv = ++mv + mv();
+  mv.printHistData();
+
+  ASSERT_EQ(94, mv());
+
+  mv++;
+  mv.printHistData();
+
+  ASSERT_EQ(95, mv());
+
+  mv = ++mv + mv() + mv++;
+  mv.printHistData();
+
+  ASSERT_EQ(289, mv());
+
+  mv--;
+  mv.printHistData();
+
+  ASSERT_EQ(288, mv());
+
+  mv = --mv - mv() - mv--;
+  mv.printHistData();
+
+  ASSERT_EQ(-286, mv());
+}
+
+TEST(memVarTest, test_5)
+{
+  utilities::memvar<int> mv(0,10'000);
+  ASSERT_EQ(10'000, mv.getHistCapacity());
+
+  int c{0};
+  while ( false == mv.isHistoryFull() )
+  {
+    mv = ++c;
+  }
+  mv.clearHistory();
+  ASSERT_EQ(9999, mv());
+  ASSERT_EQ(10'000, mv.getHistCapacity());
+  ASSERT_EQ(1, mv.getHistSize());
+  mv.printHistData();
+}
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here
