@@ -858,9 +858,19 @@ TEST(memVarTest, test_8)
   ASSERT_EQ('C', mvc());
   ASSERT_EQ(5, mvc.getHistorySize());
 
+  utilities::memvar<varType>::historyValue hv {};
+
+  hv = mvc.getHistoryValue(1);
+  ASSERT_EQ('D', std::get<varType>(hv));
+  ASSERT_EQ(false, std::get<bool>(hv));
+
+  hv = mvc.getHistoryValue(2);
+  ASSERT_EQ('C', std::get<varType>(hv));
+  ASSERT_EQ(false, std::get<bool>(hv));
+
   varType value {};
   bool error {};
-  
+
   std::tie(value, error) = mvc.getHistoryValue(3);
   ASSERT_EQ('B', value);
   ASSERT_EQ(false, error);

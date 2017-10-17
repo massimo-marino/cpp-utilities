@@ -21,6 +21,8 @@ class memvar final
   using memvarHistory = std::deque<T>;
   
  public:
+  using historyValue = std::tuple<T, bool>;
+
   explicit memvar() noexcept
   {
     static_assert( (true == std::is_integral<T>::value ||
@@ -137,7 +139,7 @@ class memvar final
     return memo_;
   }
 
-  auto getHistoryValue(const int index) const noexcept -> std::tuple<T, bool>
+  auto getHistoryValue(const int index) const noexcept -> historyValue
   {
     if ( (index < getHistorySize()) && (index >= 0) )
     {
