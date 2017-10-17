@@ -794,15 +794,26 @@ TEST(memVarTest, test_5)
   utilities::memvar<varType> mv {0,historyCapacity};
   ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
 
-  varType c {0};
-  while ( false == mv.isHistoryFull() )
+  auto func = [&mv] ()
   {
-    mv = ++c;
-  }
+    varType c {0};
+    while ( false == mv.isHistoryFull() )
+    {
+      mv = ++c;
+    }
+  };
+  auto t = utilities::perftimer<>::duration(func).count();
+  std::cout << "loop took: " << t << " nsec" << std::endl;
+
   ASSERT_EQ(mv.getHistoryCapacity(), mv.getHistorySize());
   ASSERT_EQ(historyCapacity - 1, mv());
 
-  mv.clearHistory();
+  auto clearHistory = [&mv] ()
+  {
+    mv.clearHistory();
+  };
+  t = utilities::perftimer<>::duration(clearHistory).count();
+  std::cout << "history clearing took: " << t << " nsec" << std::endl;
   ASSERT_EQ(historyCapacity - 1, mv());
   ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
   ASSERT_EQ(1, mv.getHistorySize());
@@ -813,18 +824,31 @@ TEST(memVarTest, test_6)
 {
   using varType = int;
   constexpr varType historyCapacity {100};
+  constexpr varType maxValue {1'000'000'000};
   utilities::memvar<varType> mv {0,historyCapacity};
   ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
 
-  varType c {0};
-  constexpr varType maxValue {1'000'000'000};
-  while ( c < maxValue )
+  auto func = [&mv, maxValue] ()
   {
-    mv = ++c;
-  }
+    varType c {0};
+    while ( c < maxValue )
+    {
+      mv = ++c;
+    }
+  };
+  auto t = utilities::perftimer<>::duration(func).count();
+  std::cout << "loop took: " << t << " nsec" << std::endl;
+
   ASSERT_EQ(maxValue, mv());
-  mv.printHistoryData();
-  mv.clearHistory();
+  ASSERT_EQ(historyCapacity, mv.getHistorySize());
+  //mv.printHistoryData();
+
+  auto clearHistory = [&mv] ()
+  {
+    mv.clearHistory();
+  };
+  t = utilities::perftimer<>::duration(clearHistory).count();
+  std::cout << "history clearing took: " << t << " nsec" << std::endl;
   ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
   ASSERT_EQ(1, mv.getHistorySize());
   ASSERT_EQ(maxValue, mv());
@@ -885,9 +909,9 @@ TEST(memVarTest, test_8)
   ASSERT_EQ(true, error);
 
   // trying to access the history out of bound
-  std::tie(value, error) = mvc.getHistoryValue(100000);
-  ASSERT_EQ(varType {}, value);
-  ASSERT_EQ(true, error);
+  auto [v, e] = mvc.getHistoryValue(100000);
+  ASSERT_EQ(varType {}, v);
+  ASSERT_EQ(true, e);
 }
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
