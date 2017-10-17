@@ -785,6 +785,10 @@ TEST(memVarTest, test_4)
   std::cout << mv.getMemVarHistory() << std::endl;
   utilities::printDequeElements(mv.getMemVarHistory());
   utilities::printContainerElements(mv.getMemVarHistory());
+  auto mvh {mv.getMemVarHistory()};
+  std::cout << mvh << std::endl;
+  utilities::printDequeElements(mvh);
+  utilities::printContainerElements(mvh);
 }
 
 TEST(memVarTest, test_5)
