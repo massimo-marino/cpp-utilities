@@ -14,10 +14,46 @@
 #include "objectFactory.h"
 #include "printHelpers.h"
 
+#include <type_traits>
 #include <thread>
-////////////////////////////////////////////////////////////////////////////////
+
+#ifndef NO_DEMANGLE
+#include <cxxabi.h>
+
 namespace utilities
 {
+template <typename T>
+std::string
+type (void)
+{
+  std::string result;
+  int         status;
+  char*       demangled = abi::__cxa_demangle(typeid(T).name(),
+                                              nullptr, nullptr, &status);
+
+  result = demangled;
+  free(demangled);
+
+  return result;
+}
+#else
+// no demangling
+template <typename T>
+std::string
+type (void)
+{
+  return typeid(T).name();
+}
+#endif
+
+template <typename T>
+struct is_string
+{
+  static inline const bool value = std::is_same<T, std::string>::value ||
+                                   std::is_same<T, std::wstring>::value ||
+                                   std::is_same<T, std::u16string>::value ||
+                                   std::is_same<T, std::u32string>::value;
+};
 ////////////////////////////////////////////////////////////////////////////////
 
 void yieldCPUAndSleep (const int64_t& nanoseconds = 0) noexcept;
@@ -51,21 +87,31 @@ struct perftimer
 ////////////////////////////////////////////////////////////////////////////////
 // memvar
 // a variable with memory of old values
-// only integral or floating point numbers allowed
+// only strings, integral or floating point numbers allowed
 template <typename T>
 class memvar final
 {
+  using memvarHistory = std::deque<T>;
+  
  public:
   memvar() noexcept
   {
+    static_assert( (true == std::is_integral<T>::value ||
+                    true == std::is_floating_point<T>::value ||
+                    true == is_string<T>::value),
+                  "String, integral or floating point required.");
     setValue(T{});
   }
 
-  memvar(const T& value, const int histCapacity = histCapacityDefault) noexcept(false)
+  memvar(const T& value, const int historyCapacity = historyCapacityDefault) noexcept(false)
   :
-  histCapacity_ (histCapacity)
+  historyCapacity_ (historyCapacity)
   {
-    if ( histCapacity_ <= 0 )
+    static_assert( (true == std::is_integral<T>::value ||
+                    true == std::is_floating_point<T>::value ||
+                    true == is_string<T>::value),
+                  "String, integral or floating point required.");
+    if ( historyCapacity_ <= 0 )
     {
       throw std::invalid_argument("ERROR: The history capacity must not be zero or negative");
     }
@@ -90,81 +136,99 @@ class memvar final
     return getValue();
   }
 
+  T incr1() const noexcept
+  {
+    T newValue = getValue() + 1;
+
+    setValue(newValue);
+    return newValue;    
+  }
+
   // ++mv
   T operator++() const noexcept
   {
-    setValue(getValue() + 1);
-    return getValue();
+    return incr1();
   }
 
   // mv++
   T operator++(int dummy) const noexcept
   {
-    setValue(getValue() + 1);
-    return getValue();
+    return incr1();
   }  
 
-    // --mv
+  T decr1() const noexcept
+  {
+    T newValue = getValue() - 1;
+
+    setValue(newValue);
+    return newValue;    
+  }
+
+  // --mv
   T operator--() const noexcept
   {
-    setValue(getValue() - 1);
-    return getValue();
+    return decr1();
   }
 
   // mv--
   T operator--(int dummy) const noexcept
   {
-    setValue(getValue() - 1);
-    return getValue();
+    return decr1();
   }
 
-  void printHistData() const noexcept
+  void printHistoryData() const noexcept
   {
-    utilities::printVectorElements(mem_);
+    utilities::printDequeElements(memo_);
   }
 
-  int getHistCapacity() const noexcept
+  int getHistoryCapacity() const noexcept
   {
-    return histCapacity_;
+    return historyCapacity_;
   }
 
-  auto getHistSize() const noexcept
+  auto getHistorySize() const noexcept
   {
-    return mem_.size();
+    return memo_.size();
   }
 
   void clearHistory() const noexcept
   {
-    mem_.erase(begin(mem_) + 1, end(mem_));
+    memo_.erase(begin(memo_) + 1, end(memo_));
+    memo_.shrink_to_fit();
   }
 
   bool isHistoryFull() const noexcept
   {
-    return mem_.size() >= histCapacity_; 
+    return memo_.size() >= historyCapacity_; 
+  }
+
+  memvarHistory getMemVarHistory () const noexcept
+  {
+    return memo_;
   }
 
  private:
-  static const int histCapacityDefault {10};
-  const int histCapacity_ {histCapacityDefault};
-  mutable std::vector<T> mem_ {};
+  static const int historyCapacityDefault {10};
+  const int historyCapacity_ {historyCapacityDefault};
+  mutable memvarHistory memo_ {};
 
   void setValue(const T& value) const noexcept
   {
-    mem_.emplace(begin(mem_), value);
-    if ( mem_.size() > getHistCapacity() )
+    memo_.emplace(begin(memo_), value);
+    if ( memo_.size() > getHistoryCapacity() )
     {
-      mem_.pop_back();
+      memo_.pop_back();
     }
   }
 
   T getValue() const noexcept
   {
-    return mem_.at(0);
+    return memo_.at(0);
   }
 
-  void setHistCapacity(const int newHistCapacity = histCapacityDefault) const noexcept
+  void setHistoryCapacity(const int newHistoryCapacity = historyCapacityDefault) const noexcept
   {
-    histCapacity_ = newHistCapacity;
+    historyCapacity_ = newHistoryCapacity;
   }
 };  // memvar
 ////////////////////////////////////////////////////////////////////////////////

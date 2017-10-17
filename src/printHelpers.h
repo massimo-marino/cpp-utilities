@@ -10,11 +10,30 @@
 
 #include <map>
 #include <valarray>
+#include <deque>
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
 template <typename T>
 void printVectorElements (const std::vector<T>& v) noexcept
+{
+  if ( true == v.empty() )
+  {
+    return;
+  }
+
+  auto printItem = [] (const T& item)
+  {
+    std::cout << item << " ";
+  };
+
+  std::cout << "[ ";
+  std::for_each(std::begin(v), std::end(v), printItem);
+  std::cout << "]" << std::endl;
+}
+
+template <typename T>
+void printDequeElements (const std::deque<T>& v) noexcept
 {
   if ( true == v.empty() )
   {
@@ -117,6 +136,46 @@ std::ostream& operator<<(std::ostream &os, const std::valarray<T>& va)
 
   os << "[ ";
   std::for_each(std::begin(va), std::end(va), printItem);
+  os << "]";
+  return os;
+}
+
+// overload << stream operator for std::vector's
+template <typename T>
+std::ostream& operator<<(std::ostream &os, const std::vector<T>& v)
+{
+  if ( 0 == v.size() )
+  {
+    return os;
+  }
+
+  auto printItem = [&os] (const T& item)
+  {
+    os << item << " ";
+  };
+  
+  os << "[ ";
+  std::for_each(std::begin(v), std::end(v), printItem);
+  os << "]";
+  return os;
+}
+
+// overload << stream operator for std::vector's
+template <typename T>
+std::ostream& operator<<(std::ostream &os, const std::deque<T>& v)
+{
+  if ( 0 == v.size() )
+  {
+    return os;
+  }
+
+  auto printItem = [&os] (const T& item)
+  {
+    os << item << " ";
+  };
+  
+  os << "[ ";
+  std::for_each(std::begin(v), std::end(v), printItem);
   os << "]";
   return os;
 }

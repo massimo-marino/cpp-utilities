@@ -683,35 +683,44 @@ TEST(memVarTest, test_1)
 {
   EXPECT_THROW(utilities::memvar<int> mv(0,0), std::invalid_argument);
   EXPECT_THROW(utilities::memvar<int> mv(0,-10), std::invalid_argument);
-  EXPECT_NO_THROW(utilities::memvar<int> mv{});
-  EXPECT_NO_THROW(utilities::memvar<int> mv());
+  EXPECT_NO_THROW(utilities::memvar<int> mv {});
   EXPECT_NO_THROW(utilities::memvar<int> mv(11, 20));
+
+  EXPECT_THROW(utilities::memvar<double> mv(0.0,0), std::invalid_argument);
+  EXPECT_THROW(utilities::memvar<double> mv(0.0,-10), std::invalid_argument);
+  EXPECT_NO_THROW(utilities::memvar<double> mv {});
+  EXPECT_NO_THROW(utilities::memvar<double> mv(11.2345, 20));
+
+  EXPECT_THROW(utilities::memvar<std::string> mv("Hello World!",0), std::invalid_argument);
+  EXPECT_THROW(utilities::memvar<std::string> mv("Hello World!",-10), std::invalid_argument);
+  EXPECT_NO_THROW(utilities::memvar<std::string> mv {});
+  EXPECT_NO_THROW(utilities::memvar<std::string> mv("Hello World!", 20));
 }
 
 TEST(memVarTest, test_2)
 {
-  utilities::memvar<int> mv{};
-  ASSERT_EQ(10, mv.getHistCapacity());
-  mv.printHistData();
-  ASSERT_EQ(int{}, mv());
-  
+  utilities::memvar<int> mv {};
+  ASSERT_EQ(10, mv.getHistoryCapacity());
+  mv.printHistoryData();
+  ASSERT_EQ(int {}, mv());
+
   int v = mv();
-  ASSERT_EQ(int{}, v);
+  ASSERT_EQ(int {}, v);
   ASSERT_EQ(0, v);
-  
+
   v = 123;
-  ASSERT_NE(int{}, v);
+  ASSERT_NE(int {}, v);
   ASSERT_NE(v, mv());
 
   int w = mv();
-  ASSERT_EQ(int{}, w);
+  ASSERT_EQ(int {}, w);
   ASSERT_EQ(0, w);
 }
 
 TEST(memVarTest, test_3)
 {
-  utilities::memvar<int> mv{55};
-  mv.printHistData();
+  utilities::memvar<int> mv {55};
+  mv.printHistoryData();
   ASSERT_EQ(55, mv());
 
   int v = mv();
@@ -727,67 +736,103 @@ TEST(memVarTest, test_3)
 
 TEST(memVarTest, test_4)
 {
-  utilities::memvar<int> mv(33,9);
-  ASSERT_EQ(9, mv.getHistCapacity());
+  utilities::memvar<int> mv {33,9};
+  ASSERT_EQ(9, mv.getHistoryCapacity());
 
   ASSERT_EQ(33, mv());
 
   mv = 78;
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(78, mv());
 
   mv = 45;
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(45, mv());
 
   ++mv;
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(46, mv());
 
   mv = ++mv + mv();
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(94, mv());
 
   mv++;
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(95, mv());
 
   mv = ++mv + mv() + mv++;
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(289, mv());
 
   mv--;
-  mv.printHistData();
+  mv.printHistoryData();
 
   ASSERT_EQ(288, mv());
 
   mv = --mv - mv() - mv--;
-  mv.printHistData();
 
   ASSERT_EQ(-286, mv());
+
+  // ways of printing the history data in the memvar
+  mv.printHistoryData();
+  std::cout << mv.getMemVarHistory() << std::endl;
+  utilities::printDequeElements(mv.getMemVarHistory());
+  utilities::printContainerElements(mv.getMemVarHistory());
 }
 
 TEST(memVarTest, test_5)
 {
-  utilities::memvar<int> mv(0,10'000);
-  ASSERT_EQ(10'000, mv.getHistCapacity());
+  using varType = int;
+  constexpr varType M {1'000'000'000};
+  utilities::memvar<varType> mv {0,M};
+  ASSERT_EQ(M, mv.getHistoryCapacity());
 
-  int c{0};
+  varType c {0};
   while ( false == mv.isHistoryFull() )
   {
     mv = ++c;
   }
+  ASSERT_EQ(mv.getHistoryCapacity(), mv.getHistorySize());
+  ASSERT_EQ(M - 1, mv());
+
   mv.clearHistory();
-  ASSERT_EQ(9999, mv());
-  ASSERT_EQ(10'000, mv.getHistCapacity());
-  ASSERT_EQ(1, mv.getHistSize());
-  mv.printHistData();
+  ASSERT_EQ(M - 1, mv());
+  ASSERT_EQ(M, mv.getHistoryCapacity());
+  ASSERT_EQ(1, mv.getHistorySize());
+  mv.printHistoryData();
+}
+
+TEST(memVarTest, test_6)
+{
+  utilities::memvar<std::string> mvs {"A"};
+  std::string s {"B"};
+  mvs = s;
+  mvs = mvs() + s;
+  mvs.printHistoryData();
+
+  ASSERT_EQ("BB", mvs());
+  ASSERT_EQ(3, mvs.getHistorySize());
+}
+
+TEST(memVarTest, test_7)
+{
+  utilities::memvar<char> mvc {'A'};
+  char c = mvc() + 1;
+  mvc = c;  // B
+  mvc++;  // C
+  mvc++;  // D
+  mvc--;  // C
+  mvc.printHistoryData();
+
+  ASSERT_EQ('C', mvc());
+  ASSERT_EQ(5, mvc.getHistorySize());
 }
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
