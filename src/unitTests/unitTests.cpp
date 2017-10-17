@@ -790,9 +790,9 @@ TEST(memVarTest, test_4)
 TEST(memVarTest, test_5)
 {
   using varType = int;
-  constexpr varType M {1'000'000'000};
-  utilities::memvar<varType> mv {0,M};
-  ASSERT_EQ(M, mv.getHistoryCapacity());
+  constexpr varType historyCapacity {1'000'000'000};
+  utilities::memvar<varType> mv {0,historyCapacity};
+  ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
 
   varType c {0};
   while ( false == mv.isHistoryFull() )
@@ -800,16 +800,38 @@ TEST(memVarTest, test_5)
     mv = ++c;
   }
   ASSERT_EQ(mv.getHistoryCapacity(), mv.getHistorySize());
-  ASSERT_EQ(M - 1, mv());
+  ASSERT_EQ(historyCapacity - 1, mv());
 
   mv.clearHistory();
-  ASSERT_EQ(M - 1, mv());
-  ASSERT_EQ(M, mv.getHistoryCapacity());
+  ASSERT_EQ(historyCapacity - 1, mv());
+  ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
   ASSERT_EQ(1, mv.getHistorySize());
   mv.printHistoryData();
 }
 
 TEST(memVarTest, test_6)
+{
+  using varType = int;
+  constexpr varType historyCapacity {100};
+  utilities::memvar<varType> mv {0,historyCapacity};
+  ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
+
+  varType c {0};
+  constexpr varType maxValue {1'000'000'000};
+  while ( c < maxValue )
+  {
+    mv = ++c;
+  }
+  ASSERT_EQ(maxValue, mv());
+  mv.printHistoryData();
+  mv.clearHistory();
+  ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
+  ASSERT_EQ(1, mv.getHistorySize());
+  ASSERT_EQ(maxValue, mv());
+  mv.printHistoryData();
+}
+
+TEST(memVarTest, test_7)
 {
   utilities::memvar<std::string> mvs {"A"};
   std::string s {"B"};
@@ -821,18 +843,41 @@ TEST(memVarTest, test_6)
   ASSERT_EQ(3, mvs.getHistorySize());
 }
 
-TEST(memVarTest, test_7)
+TEST(memVarTest, test_8)
 {
-  utilities::memvar<char> mvc {'A'};
-  char c = mvc() + 1;
+  using varType = char;
+  utilities::memvar<varType> mvc {'A'};
+  varType c = mvc() + 1;
   mvc = c;  // B
   mvc++;  // C
   mvc++;  // D
   mvc--;  // C
+  // [ C D C B A  ]
   mvc.printHistoryData();
 
   ASSERT_EQ('C', mvc());
   ASSERT_EQ(5, mvc.getHistorySize());
+
+  varType value {};
+  bool error {};
+  
+  std::tie(value, error) = mvc.getHistoryValue(3);
+  ASSERT_EQ('B', value);
+  ASSERT_EQ(false, error);
+
+  std::tie(value, error) = mvc.getHistoryValue(4);
+  ASSERT_EQ('A', value);
+  ASSERT_EQ(false, error);
+
+  // trying to access the history out of bound
+  std::tie(value, error) = mvc.getHistoryValue(5);
+  ASSERT_EQ(char {}, value);
+  ASSERT_EQ(true, error);
+
+  // trying to access the history out of bound
+  std::tie(value, error) = mvc.getHistoryValue(100000);
+  ASSERT_EQ(varType {}, value);
+  ASSERT_EQ(true, error);
 }
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
