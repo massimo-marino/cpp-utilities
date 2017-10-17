@@ -917,6 +917,93 @@ TEST(memVarTest, test_8)
   ASSERT_EQ(varType {}, v);
   ASSERT_EQ(true, e);
 }
+
+void testIOColor(const enum iocolor::color fg, const enum iocolor::color bg)
+{
+  std::cout << iocolor::color::reset
+            << iocolor::foreground(fg)
+            << iocolor::background(bg)
+            << "REGULAR"
+            << iocolor::color::reset
+            << std::endl
+            << iocolor::foreground(fg)
+            << iocolor::background(bg)
+            << iocolor::effects(iocolor::effect::bold)
+            << "BOLD"
+            << iocolor::color::reset
+            << std::endl
+            << iocolor::foreground(fg)
+            << iocolor::background(bg)
+            << iocolor::effects(iocolor::effect::underline)
+            << "UNDERLINE"
+            << iocolor::color::reset
+            << std::endl
+            << iocolor::foreground(fg)
+            << iocolor::background(bg)
+            << iocolor::effects(iocolor::effect::reverse)
+            << "REVERSE"
+            << iocolor::color::reset
+            << std::endl
+            << iocolor::foreground(fg)
+            << iocolor::background(bg)
+            << iocolor::effects(iocolor::effect::strike)
+            << "STRIKE"
+            << iocolor::color::reset
+            << std::endl;
+}
+
+TEST(ioColor, test_1)
+{
+  testIOColor(iocolor::color::none, iocolor::color::none);
+}
+
+TEST(ioColor, test_2)
+{
+  testIOColor(iocolor::color::black, iocolor::color::white);
+  testIOColor(iocolor::color::white, iocolor::color::black);
+}
+
+TEST(ioColor, test_3)
+{
+  testIOColor(iocolor::color::red, iocolor::color::white);
+  testIOColor(iocolor::color::white, iocolor::color::red);
+}
+
+TEST(ioColor, test_4)
+{
+  testIOColor(iocolor::color::red, iocolor::color::black);
+  testIOColor(iocolor::color::black, iocolor::color::red);
+}
+
+TEST(ioColor, test_5)
+{
+  testIOColor(iocolor::color::yellow, iocolor::color::black);
+  testIOColor(iocolor::color::black, iocolor::color::yellow);
+}
+
+TEST(ioColor, test_6)
+{
+  testIOColor(iocolor::color::yellow, iocolor::color::green);
+  testIOColor(iocolor::color::green, iocolor::color::yellow);
+}
+
+TEST(ioColor, test_7)
+{
+  testIOColor(iocolor::color::yellow, iocolor::color::blue);
+  testIOColor(iocolor::color::blue, iocolor::color::yellow);
+}
+
+TEST(ioColor, test_8)
+{
+  testIOColor(iocolor::color::yellow, iocolor::color::red);
+  testIOColor(iocolor::color::red, iocolor::color::yellow);
+}
+
+TEST(ioColor, test_9)
+{
+  testIOColor(iocolor::color::yellow, iocolor::color::magenta);
+  testIOColor(iocolor::color::magenta, iocolor::color::yellow);
+}
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here

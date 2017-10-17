@@ -9,6 +9,7 @@
 #define UTILITIES_H
 
 #include "is_string.h"
+#include "iocolor.h"
 #include "concurrentLogging.h"
 #include "containerHelpers.h"
 #include "vectorHelpers.h"
