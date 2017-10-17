@@ -46,6 +46,9 @@ class memvar final
     setValue(value);
   }
 
+  // we don't want these objects allocated on the heap
+  void* operator new(std::size_t) = delete;
+  void operator delete(void*) = delete;
   ~memvar() = default;
   memvar(const memvar& rhs) = delete;
   memvar& operator=(const memvar& rhs) = delete;
