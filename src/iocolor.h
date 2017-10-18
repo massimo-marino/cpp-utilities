@@ -4,22 +4,22 @@
  *
  * Created on October 17, 2017, 1:50 PM
  */
-#ifndef _IOCOLOR_H
-#define _IOCOLOR_H
+#ifndef IOCOLOR_H
+#define IOCOLOR_H
 
 #include <iostream>
 #include <unistd.h>
 ////////////////////////////////////////////////////////////////////////////////
 namespace iocolor
 {
-	static
+	static inline
 	bool
 	is_tty (const int fd) noexcept
 	{
 		return isatty(fd);
 	}
 
-	static
+	static inline
 	bool
 	is_tty (const std::ostream& s) noexcept
 	{
@@ -43,29 +43,29 @@ namespace iocolor
 
 	enum class color : short
 	{
-		black = 0,
-		red,
-		green,
-		yellow,
-		blue,
-		magenta,
-		cyan,
-		white,
+    reset   = -2, // "\033[0m"
+    none    = -1,
 
-		none  = -1,
-		reset = -2
+    black   = 0,  // "\033[30m"
+    red     = 1,  // "\033[31m"
+    green   = 2,  // "\033[32m"
+    yellow  = 3,  // "\033[33m"
+    blue    = 4,  // "\033[34m"
+    magenta = 5,  // "\033[35m"
+    cyan    = 6,  // "\033[36m"
+    white   = 7,  // "\033[37m"
 	};
 
 	enum class effect : uint8_t
 	{
-		none = 0,
+    none      = 0,  // "\033[0m"
 
-		bold      = 1,  // 1
-		underline = 2,  // 4
-		blink     = 4,  // 5
-		reverse   = 8,  // 7
-    concealed = 16, // 8
-    strike    = 32  // 9
+    bold      = 1,  // "\033[1m"
+    underline = 2,  // "\033[4m"
+    blink     = 4,  // "\033[5m"
+    reverse   = 8,  // "\033[7m"
+    concealed = 16, // "\033[8m"
+    strike    = 32, // "\033[9m"
 	};
 
 	inline constexpr
@@ -75,7 +75,7 @@ namespace iocolor
 		return static_cast<effect>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	make_color (const enum color fg,
               const enum color bg = color::none,
@@ -86,7 +86,7 @@ namespace iocolor
 		         static_cast<uint8_t>(ef) };
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	make_color (const short fg,
               const short bg = -1,
@@ -95,42 +95,42 @@ namespace iocolor
 		return { fg, bg, ef };
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	foreground (const enum color fg) noexcept
 	{
 		return make_color(fg);
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	foreground (const short fg) noexcept
 	{
 		return make_color(fg);
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	background (const enum color bg) noexcept
 	{
 		return make_color(color::none, bg);
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	background (const short bg) noexcept
 	{
 		return make_color(-1, bg);
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	effects (const enum effect ef) noexcept
 	{
 		return make_color(color::none, color::none, ef);
 	}
 
-	inline
+	inline constexpr
 	color_definition
 	effects (const uint8_t ef) noexcept
 	{
@@ -139,38 +139,43 @@ namespace iocolor
 }  // namespace iocolor
 ////////////////////////////////////////////////////////////////////////////////
 std::ostream&
-operator << (std::ostream& o, const iocolor::color_definition descriptor) noexcept
+operator << (std::ostream& os, const iocolor::color_definition& descriptor) noexcept
 {
-	if ( !iocolor::is_tty(o) )
+	if ( !iocolor::is_tty(os) )
   {
-		return o;
+		return os;
 	}
 
 	if (descriptor.effects != 0)
   {
 		if (descriptor.effects & static_cast<uint8_t>(iocolor::effect::bold))
     {
-			o << "\033[1m";
+			os << "\033[1m";
 		}
 
 		if (descriptor.effects & static_cast<uint8_t>(iocolor::effect::underline))
     {
-			o << "\033[4m";
+			os << "\033[4m";
 		}
 
 		if (descriptor.effects & static_cast<uint8_t>(iocolor::effect::blink))
     {
-			o << "\033[5m";
+			os << "\033[5m";
 		}
 
 		if (descriptor.effects & static_cast<uint8_t>(iocolor::effect::reverse))
     {
-			o << "\033[7m";
+			os << "\033[7m";
+		}
+
+ 		if (descriptor.effects & static_cast<uint8_t>(iocolor::effect::concealed))
+    {
+			os << "\033[8m";
 		}
 
  		if (descriptor.effects & static_cast<uint8_t>(iocolor::effect::strike))
     {
-			o << "\033[9m";
+			os << "\033[9m";
 		}
 	}
 
@@ -178,11 +183,11 @@ operator << (std::ostream& o, const iocolor::color_definition descriptor) noexce
   {
 		if (descriptor.foreground < 8)
     {
-			o << "\033[" << descriptor.foreground + 30 << "m";
+			os << "\033[" << descriptor.foreground + 30 << "m";
 		}
 		else
     {
-			o << "\033[38;5;" << descriptor.foreground << "m";
+			os << "\033[38;5;" << descriptor.foreground << "m";
 		}
 	}
 
@@ -190,37 +195,37 @@ operator << (std::ostream& o, const iocolor::color_definition descriptor) noexce
   {
 		if (descriptor.background < 8)
     {
-			o << "\033[" << descriptor.background + 40 << "m";
+			os << "\033[" << descriptor.background + 40 << "m";
 		}
 		else
     {
-			o << "\033[48;5;" << descriptor.background << "m";
+			os << "\033[48;5;" << descriptor.background << "m";
 		}
 	}
 
-	return o;
+	return os;
 }
 
 std::ostream&
-operator << (std::ostream& o, const enum iocolor::color c) noexcept
+operator << (std::ostream& os, const enum iocolor::color c) noexcept
 {
 	if (c == iocolor::color::reset)
   {
-		return o << "\033[0m";
+		return os << "\033[0m";
 	}
 
-	return o << iocolor::foreground(c);
+	return os << iocolor::foreground(c);
 }
 
 std::ostream&
-operator << (std::ostream& o, const enum iocolor::effect ef) noexcept
+operator << (std::ostream& os, const enum iocolor::effect ef) noexcept
 {
   if (ef == iocolor::effect::none)
   {
-		return o << "\033[0m";
+		return os << "\033[0m";
 	}
 
-	return o << iocolor::effects(ef);
+	return os << iocolor::effects(ef);
 }
 
-#endif
+#endif  // IOCOLOR_H

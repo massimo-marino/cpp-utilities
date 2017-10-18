@@ -918,92 +918,265 @@ TEST(memVarTest, test_8)
   ASSERT_EQ(true, e);
 }
 
-void testIOColor(const enum iocolor::color fg, const enum iocolor::color bg)
+////////////////////////////////////////////////////////////////////////////////
+static inline
+void testIOColor(const enum iocolor::color fg,
+                 const enum iocolor::color bg) noexcept
 {
   std::cout << iocolor::color::reset
             << iocolor::foreground(fg)
             << iocolor::background(bg)
-            << "REGULAR"
+            << " REGULAR "
             << iocolor::color::reset
-            << std::endl
             << iocolor::foreground(fg)
             << iocolor::background(bg)
             << iocolor::effects(iocolor::effect::bold)
-            << "BOLD"
+            << " BOLD "
             << iocolor::color::reset
-            << std::endl
             << iocolor::foreground(fg)
             << iocolor::background(bg)
             << iocolor::effects(iocolor::effect::underline)
-            << "UNDERLINE"
+            << " UNDERLINE "
             << iocolor::color::reset
-            << std::endl
             << iocolor::foreground(fg)
             << iocolor::background(bg)
             << iocolor::effects(iocolor::effect::reverse)
-            << "REVERSE"
+            << " REVERSE "
             << iocolor::color::reset
-            << std::endl
             << iocolor::foreground(fg)
             << iocolor::background(bg)
             << iocolor::effects(iocolor::effect::strike)
-            << "STRIKE"
+            << " STRIKE "
             << iocolor::color::reset
             << std::endl;
 }
 
-TEST(ioColor, test_1)
+TEST(ioColor, test_full_1)
 {
-  testIOColor(iocolor::color::none, iocolor::color::none);
+  const std::vector<iocolor::color> foreGroundVector
+  {
+    iocolor::color::black,
+    iocolor::color::red,
+    iocolor::color::green,
+    iocolor::color::yellow,
+    iocolor::color::blue,
+    iocolor::color::magenta,
+    iocolor::color::cyan,
+    iocolor::color::white,
+  };
+  const std::vector<iocolor::color> backGroundVector
+  {
+    iocolor::color::black,
+    iocolor::color::red,
+    iocolor::color::green,
+    iocolor::color::yellow,
+    iocolor::color::blue,
+    iocolor::color::magenta,
+    iocolor::color::cyan,
+    iocolor::color::white,
+  };
+  const std::vector<iocolor::effect> effectVector
+  {
+    iocolor::effect::none,
+    iocolor::effect::bold,
+    iocolor::effect::underline,
+    iocolor::effect::reverse,
+    iocolor::effect::strike,
+  };
+
+  auto f1 = [&backGroundVector, &effectVector]
+            (const iocolor::color& foreGroundColor) noexcept
+            {
+              auto f2 = [&effectVector, &foreGroundColor]
+                        (const iocolor::color& backGroundColor) noexcept
+                        {
+                          auto f3 = [&foreGroundColor, &backGroundColor]
+                                    (const iocolor::effect& effect) noexcept
+                                    {
+                                      std::cout << iocolor::foreground(foreGroundColor)
+                                                << iocolor::background(backGroundColor)
+                                                << iocolor::effects(effect)
+                                                << " ABCDEFGHabcdefgh012345 "
+                                                << iocolor::color::reset;
+                                    };
+                                    std::for_each(std::begin(effectVector),
+                                                  std::end(effectVector),
+                                                  f3);
+                                    std::cout << std::endl;
+                        };
+              std::for_each(std::begin(backGroundVector), std::end(backGroundVector), f2);
+            };
+  std::for_each(std::begin(foreGroundVector), std::end(foreGroundVector), f1);
+
+// the code above does the same of the following commented code
+//  for (auto&& fgc : foreGroundVector)
+//  {
+//    for (auto&& bgc : backGroundVector)
+//    {
+//      for (auto&& eff: effectVector)
+//      {
+//        std::cout << iocolor::foreground(fgc)
+//                  << iocolor::background(bgc)
+//                  << iocolor::effects(eff)
+//                  << " ABCDEFGHabcdefgh012345 "
+//                  << iocolor::color::reset;
+//      }
+//      std::cout << std::endl;
+//    }
+//  }
 }
 
-TEST(ioColor, test_2)
+TEST(ioColor, test_full_2)
 {
-  testIOColor(iocolor::color::black, iocolor::color::white);
-  testIOColor(iocolor::color::white, iocolor::color::black);
+  const std::vector<iocolor::color> foreGroundColorVector
+  {
+    iocolor::color::black,
+    iocolor::color::red,
+    iocolor::color::green,
+    iocolor::color::yellow,
+    iocolor::color::blue,
+    iocolor::color::magenta,
+    iocolor::color::cyan,
+    iocolor::color::white,
+  };
+  const std::vector<iocolor::color> backGroundColorVector
+  {
+    iocolor::color::black,
+    iocolor::color::red,
+    iocolor::color::green,
+    iocolor::color::yellow,
+    iocolor::color::blue,
+    iocolor::color::magenta,
+    iocolor::color::cyan,
+    iocolor::color::white,
+  };
+  
+  auto f1 = [&backGroundColorVector]
+            (const iocolor::color& foreGroundColor) noexcept
+            {
+              auto f2 = [&foreGroundColor]
+                        (const iocolor::color& backGroundColor) noexcept
+                        {
+                          testIOColor(foreGroundColor,backGroundColor);  
+                        };
+              std::for_each(std::begin(backGroundColorVector),
+                            std::end(backGroundColorVector),
+                            f2);
+            };
+  std::for_each(std::begin(foreGroundColorVector), std::end(foreGroundColorVector), f1);
+
+// the code above does the same of the following commented code
+//  for (auto&& foreGroundColor : foreGroundColorVector)
+//  {
+//    for (auto&& backGroundColor : backGroundColorVector)
+//    {
+//      testIOColor(foreGroundColor, backGroundColor);
+//    }
+//  }
 }
 
-TEST(ioColor, test_3)
+TEST(ioColor, test_full_3)
 {
-  testIOColor(iocolor::color::red, iocolor::color::white);
-  testIOColor(iocolor::color::white, iocolor::color::red);
+  std::cout << iocolor::color::reset
+            << iocolor::foreground(iocolor::color::black)
+            << iocolor::background(iocolor::color::black)
+            << "          "
+            << iocolor::foreground(iocolor::color::red)
+            << iocolor::background(iocolor::color::red)
+            << "          "
+            << iocolor::foreground(iocolor::color::green)
+            << iocolor::background(iocolor::color::green)
+            << "          "
+            << iocolor::foreground(iocolor::color::yellow)
+            << iocolor::background(iocolor::color::yellow)
+            << "          "
+            << iocolor::foreground(iocolor::color::blue)
+            << iocolor::background(iocolor::color::blue)
+            << "          "
+            << iocolor::foreground(iocolor::color::magenta)
+            << iocolor::background(iocolor::color::magenta)
+            << "          "
+            << iocolor::foreground(iocolor::color::cyan)
+            << iocolor::background(iocolor::color::cyan)
+            << "          "
+            << iocolor::foreground(iocolor::color::white)
+            << iocolor::background(iocolor::color::white)
+            << "          "
+            << iocolor::color::reset
+            << std::endl;
 }
 
-TEST(ioColor, test_4)
+static
+const std::string s = " ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789-_\\|!\"£$%&/()=?^{}[]@#,.;: "s;
+
+TEST(ioColor, testMakeColor_1)
 {
-  testIOColor(iocolor::color::red, iocolor::color::black);
-  testIOColor(iocolor::color::black, iocolor::color::red);
+  short color {};
+
+  for (color = 0; color <= 255; ++color)
+  {
+    std::cout << iocolor::make_color(color)
+              << "fg "
+              << color
+              << s
+              << iocolor::color::reset
+              << std::endl;
+  }
 }
 
-TEST(ioColor, test_5)
+TEST(ioColor, testMakeColor_2)
 {
-  testIOColor(iocolor::color::yellow, iocolor::color::black);
-  testIOColor(iocolor::color::black, iocolor::color::yellow);
+  short foreGroundColor {};
+
+  for (foreGroundColor = 0; foreGroundColor <= 255; ++foreGroundColor)
+  {
+    std::cout << iocolor::foreground(foreGroundColor)
+              << "fg "
+              << foreGroundColor
+              << s
+              << iocolor::color::reset
+              << std::endl;
+  }
 }
 
-TEST(ioColor, test_6)
+TEST(ioColor, testMakeColor_3)
 {
-  testIOColor(iocolor::color::yellow, iocolor::color::green);
-  testIOColor(iocolor::color::green, iocolor::color::yellow);
+  short backGroundColor {};
+
+  for (backGroundColor = 0; backGroundColor <= 255; ++backGroundColor)
+  {
+    std::cout << iocolor::background(backGroundColor)
+              << "bg "
+              << backGroundColor
+              << s
+              << iocolor::color::reset
+              << std::endl;
+  }
 }
 
-TEST(ioColor, test_7)
-{
-  testIOColor(iocolor::color::yellow, iocolor::color::blue);
-  testIOColor(iocolor::color::blue, iocolor::color::yellow);
-}
-
-TEST(ioColor, test_8)
-{
-  testIOColor(iocolor::color::yellow, iocolor::color::red);
-  testIOColor(iocolor::color::red, iocolor::color::yellow);
-}
-
-TEST(ioColor, test_9)
-{
-  testIOColor(iocolor::color::yellow, iocolor::color::magenta);
-  testIOColor(iocolor::color::magenta, iocolor::color::yellow);
-}
+// very long output: commented out
+// uncomment if wishing to run it
+//TEST(ioColor, testMakeColor_4)
+//{
+//  short foreGroundColor {};
+//  short backGroundColor {};
+//
+//  for (foreGroundColor = 0; foreGroundColor <= 255; ++foreGroundColor)
+//  {
+//    for (backGroundColor = 0; backGroundColor <= 255; ++backGroundColor)
+//    {
+//      std::cout << iocolor::foreground(foreGroundColor)
+//                << iocolor::background(backGroundColor)
+//                << "fg "
+//                << foreGroundColor
+//                << " bg "
+//                << backGroundColor
+//                << s
+//                << iocolor::color::reset
+//                << std::endl;
+//    }
+//  }
+//}
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here
