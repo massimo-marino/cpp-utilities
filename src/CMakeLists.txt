@@ -9,7 +9,7 @@ PROJECT( cppUtilities )
 
 #### settings for clang
 SET (CMAKE_CXX_COMPILER "clang++-4.0")
-SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -fno-assume-sane-operator-new")
+SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -fno-assume-sane-operator-new")
 ####SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -fno-assume-sane-operator-new -fsanitize=undefined")
 #### settings for clang
 
@@ -175,7 +175,7 @@ MESSAGE( STATUS )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-SET( sources_list utilities.cpp concurrentLogging.cpp)
+SET( sources_list utilities.cpp concurrentLogging.cpp iocolor.cpp)
 
 ADD_LIBRARY( utilities ${sources_list} )
 

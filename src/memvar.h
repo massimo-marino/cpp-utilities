@@ -21,6 +21,8 @@ class memvar final
   using memvarHistory = std::deque<T>;
   
  public:
+  // capacityType: this type must be signed
+  using capacityType = int64_t;
   using historyValue = std::tuple<T, bool>;
 
   explicit memvar() noexcept
@@ -32,7 +34,8 @@ class memvar final
     setValue(T{});
   }
 
-  explicit memvar(const T& value, const int historyCapacity = historyCapacityDefault) noexcept(false)
+  explicit memvar(const T& value,
+                  const capacityType historyCapacity = historyCapacityDefault) noexcept(false)
   :
   historyCapacity_ (historyCapacity)
   {
@@ -44,7 +47,6 @@ class memvar final
     {
       throw std::invalid_argument("ERROR: The history capacity must not be zero or negative");
     }
-
     setValue(value);
   }
 
@@ -83,10 +85,13 @@ class memvar final
   }
 
   // mv++
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wunused-parameter"
   T operator++(int dummy) const noexcept
   {
     return incr1();
   }  
+  #pragma clang diagnostic pop
 
   T decr1() const noexcept
   {
@@ -103,11 +108,14 @@ class memvar final
   }
 
   // mv--
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wunused-parameter"
   T operator--(int dummy) const noexcept
   {
     return decr1();
   }
-
+  #pragma clang diagnostic pop
+  
   void printHistoryData() const noexcept
   {
     utilities::printDequeElements(memo_);
@@ -125,7 +133,7 @@ class memvar final
 
   void clearHistory() const noexcept
   {
-    memo_.erase(begin(memo_) + 1, end(memo_));
+    memo_.erase(std::begin(memo_) + 1, std::end(memo_));
     memo_.shrink_to_fit();
   }
 
@@ -139,7 +147,7 @@ class memvar final
     return memo_;
   }
 
-  auto getHistoryValue(const int index) const noexcept -> historyValue
+  auto getHistoryValue(const capacityType index) const noexcept -> historyValue
   {
     if ( (index < getHistorySize()) && (index >= 0) )
     {
@@ -149,13 +157,13 @@ class memvar final
   }
     
  private:
-  static const int historyCapacityDefault {10};
-  const int historyCapacity_ {historyCapacityDefault};
+  static const capacityType historyCapacityDefault {10};
+  const capacityType historyCapacity_ {historyCapacityDefault};
   mutable memvarHistory memo_ {};
 
   void setValue(const T& value) const noexcept
   {
-    memo_.emplace(begin(memo_), value);
+    memo_.emplace(std::begin(memo_), value);
     if ( memo_.size() > getHistoryCapacity() )
     {
       memo_.pop_back();
@@ -167,7 +175,7 @@ class memvar final
     return memo_.at(0);
   }
 
-  void setHistoryCapacity(const int newHistoryCapacity = historyCapacityDefault) const noexcept
+  void setHistoryCapacity(const capacityType newHistoryCapacity = historyCapacityDefault) const noexcept
   {
     historyCapacity_ = newHistoryCapacity;
   }

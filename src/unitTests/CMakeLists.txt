@@ -9,7 +9,7 @@ PROJECT( cppUtilities-unit-tests )
 
 #### settings for clang
 SET (CMAKE_CXX_COMPILER "clang++-4.0")
-SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -fno-assume-sane-operator-new")
+SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -fno-assume-sane-operator-new")
 ####SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -fno-assume-sane-operator-new -fsanitize=undefined")
 #### settings for clang
 

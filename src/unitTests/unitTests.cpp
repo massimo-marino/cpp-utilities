@@ -20,7 +20,6 @@ using namespace std::string_literals;
 #pragma clang diagnostic ignored "-Wunused-member-function"
 #pragma clang diagnostic ignored "-Wexit-time-destructors"
 #pragma clang diagnostic ignored "-Wglobal-constructors"
-#pragma clang diagnostic ignored "-Wc++98-compat-bind-to-temporary-copy"
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST(helpersForConcurrentLogging, test_pclog)
@@ -793,8 +792,10 @@ TEST(memVarTest, test_4)
 
 TEST(memVarTest, test_5)
 {
-  using varType = int;
-  constexpr varType historyCapacity {1'000'000'000};
+  using varType = int64_t;
+  // you need enough memory to run this test
+  // if not, swap will be used if swap is on
+  constexpr utilities::memvar<varType>::capacityType historyCapacity {1'000'000'000};
   utilities::memvar<varType> mv {0,historyCapacity};
   ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
 
@@ -826,8 +827,8 @@ TEST(memVarTest, test_5)
 
 TEST(memVarTest, test_6)
 {
-  using varType = int;
-  constexpr varType historyCapacity {100};
+  using varType = int64_t;
+  constexpr utilities::memvar<varType>::capacityType historyCapacity {100};
   constexpr varType maxValue {1'000'000'000};
   utilities::memvar<varType> mv {0,historyCapacity};
   ASSERT_EQ(historyCapacity, mv.getHistoryCapacity());
