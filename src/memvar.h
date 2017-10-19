@@ -163,7 +163,7 @@ class memvar final
 
   void setValue(const T& value) const noexcept
   {
-    memo_.emplace(std::begin(memo_), value);
+    memo_.push_front(value);
     if ( memo_.size() > getHistoryCapacity() )
     {
       memo_.pop_back();

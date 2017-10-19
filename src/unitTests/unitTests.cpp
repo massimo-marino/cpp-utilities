@@ -994,10 +994,11 @@ TEST(ioColor, test_full_1)
                           auto f3 = [&foreGroundColor, &backGroundColor]
                                     (const iocolor::effect& effect) noexcept
                                     {
+                                      static const string_view s {" ABCDEFGHabcdefgh012345 "};
                                       std::cout << iocolor::foreground(foreGroundColor)
                                                 << iocolor::background(backGroundColor)
                                                 << iocolor::effects(effect)
-                                                << " ABCDEFGHabcdefgh012345 "
+                                                << s
                                                 << iocolor::color::reset;
                                     };
                                     std::for_each(std::begin(effectVector),
