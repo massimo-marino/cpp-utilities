@@ -8,14 +8,12 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
-#include "is_string.h"
 #include "iocolor.h"
 #include "concurrentLogging.h"
 #include "containerHelpers.h"
 #include "vectorHelpers.h"
 #include "objectFactory.h"
 #include "printHelpers.h"
-#include "memvar.h"
 
 #include <thread>
 ////////////////////////////////////////////////////////////////////////////////
