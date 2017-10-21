@@ -175,7 +175,7 @@ MESSAGE( STATUS )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-SET( sources_list utilities.cpp concurrentLogging.cpp iocolor.cpp)
+SET( sources_list utilities.cpp concurrentLogging.cpp)
 
 ADD_LIBRARY( utilities ${sources_list} )
 

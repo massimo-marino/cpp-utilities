@@ -8,7 +8,6 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
-#include "iocolor.h"
 #include "concurrentLogging.h"
 #include "containerHelpers.h"
 #include "vectorHelpers.h"
@@ -37,7 +36,7 @@ template <typename Time = std::chrono::nanoseconds,
 struct perftimer
 {
   template <typename F, typename... Args>
-  static Time duration(F&& f, Args... args)
+  static inline Time duration(F&& f, Args&&... args)
   {
     auto start = Clock::now();
     // C++17: not yet available
