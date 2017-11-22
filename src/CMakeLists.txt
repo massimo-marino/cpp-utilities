@@ -175,7 +175,7 @@ MESSAGE( STATUS )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-SET( sources_list utilities.cpp concurrentLogging.cpp)
+SET( sources_list utilities.cpp cfile_helper.cpp concurrentLogging.cpp stringTokenizers.cpp )
 
 ADD_LIBRARY( utilities ${sources_list} )
 

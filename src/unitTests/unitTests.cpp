@@ -397,284 +397,279 @@ TEST(perfTimer, test_perfTimer_4)
   std::cout << t << std::endl;
 }
 
-TEST (objectFactory, test_1)
+TEST(strTokenizers, stringTokenizer_1)
 {
-  // let's create a factory for objects of this class
-  class A
+  using container = std::vector<std::string>;
+  std::string s {" razzle      dazzle          giddyup"};
+  std::string token {};
+  container tokens {};
+  utilities::stringTokenizer st(s, " ");
+
+  std::cout << "there are "
+            << st.countTokens( )
+            << " tokens"
+            << std::endl;
+
+  while ( st.hasMoreTokens( ) )
   {
-    mutable int _x{};
-    mutable int _y{};
-    mutable int _z{};
-
-   public:
-    explicit
-    A() noexcept
-    {
-      std::cout << "default constructor A(): ";
-      display_object();
-    }
-
-    explicit
-    A(const int& x) noexcept
-    :
-    _x(x)
-    {
-      std::cout << "constructor-1 A(x): ";
-      display_object();
-    }
-
-    explicit
-    A(const int& x, const int& y) noexcept
-    :
-    _x(x),
-    _y(y)
-    {
-      std::cout << "constructor-2 A(x, y): ";
-      display_object();
-    }
-
-    explicit
-    A(const int& x, const int& y, const int& z) noexcept
-    :
-    _x(x),
-    _y(y),
-    _z(z)
-    {
-      std::cout << "constructor-3 A(x, y, z): ";
-      display_object();
-    }
-
-    int get_x() const noexcept
-    {
-      return _x;
-    }
-    int get_y() const noexcept
-    {
-      return _y;
-    }
-    int get_z() const noexcept
-    {
-      return _z;
-    }
-
-    void display_object (const std::string& prompt = "") const noexcept
-    {
-      std::cout << prompt
-                << "(x, y, z): ("
-                << get_x()
-                << ", "
-                << get_y()
-                << ", "
-                << get_z()
-                << ")"
-                << std::endl;
-    }
-
-    A(const A& rhs) = delete;
-    A& operator=(const A& rhs) = delete;
-
-    ~A()
-    {
-      std::cout << "Destroyed object: ";
-      display_object();
-    }
-  };  // class A
-
-  // The object's type returned by the factory function
-  using Object = std::unique_ptr<A>;
-  // The factory function's type
-  using objectFactoryFunction = utilities::object_factory::objectFactoryFun<A>;
-
-  // The factory function
-  objectFactoryFunction objectFactoryFun {};
-
-  // Create a factory function for our objects that call the default ctor
-  objectFactoryFun = utilities::object_factory::createObjectFactoryFun<A>();
-  // Create an object using the factory function
-  Object o0 = objectFactoryFun();
-
-  {
-    // Create a factory function for our objects that call the ctor A(const int& x)
-    objectFactoryFun = utilities::object_factory::createObjectFactoryFun<A, const int>(123);
+    st.nextToken(token);
+    tokens.push_back(token);
+    std::cout << "token = '"
+              << token
+              << "'\n";
   }
-  // Create an object using the factory function
-  Object o1 = objectFactoryFun();
-
-  // Create a factory function for our objects that call the ctor A(const int& x)
-  objectFactoryFun = utilities::object_factory::createObjectFactoryFun<A,const int>(456);
-  // Create an object using the factory function
-  Object o2 = objectFactoryFun();
-
-  // Create a factory function for our objects that call the ctor A(const int& x, const int& y)
-  objectFactoryFun = utilities::object_factory::createObjectFactoryFun<A,const int, const int>(11, 22);
-  // Create an object using the factory function
-  Object o3 = objectFactoryFun();
-
-  // Create a factory function for our objects that call the ctor A(const int& x, const int& y, const int& z)
-  objectFactoryFun = utilities::object_factory::createObjectFactoryFun<A,const int, const int, const int>(11, 22, 33);
-  // Create an object using the factory function
-  Object o4 = objectFactoryFun();
-
-  // check the values in the objects created are right
-  ASSERT_EQ(o0.get()->get_x(), 0);
-  ASSERT_EQ(o0.get()->get_y(), 0);
-  ASSERT_EQ(o0.get()->get_z(), 0);
-  ASSERT_EQ(o1.get()->get_x(), 123);
-  ASSERT_EQ(o1.get()->get_y(), 0);
-  ASSERT_EQ(o1.get()->get_z(), 0);
-  ASSERT_EQ(o2.get()->get_x(), 456);
-  ASSERT_EQ(o2.get()->get_y(), 0);
-  ASSERT_EQ(o2.get()->get_z(), 0);
-  ASSERT_EQ(o3.get()->get_x(), 11);
-  ASSERT_EQ(o3.get()->get_y(), 22);
-  ASSERT_EQ(o3.get()->get_z(), 0);
-  ASSERT_EQ(o4.get()->get_x(), 11);
-  ASSERT_EQ(o4.get()->get_y(), 22);
-  ASSERT_EQ(o4.get()->get_z(), 33);
-
-  {
-    // Create a factory function for our objects that call the ctor A(const int& x, const int& y, const int& z)
-    objectFactoryFun = utilities::object_factory::createObjectFactoryFun<A,
-                                                              const int,
-                                                              const int,
-                                                              const int>
-                                                              (99, 88, 77);
-    // define a vector for the objects created by the factory
-    std::vector<Object> v {};
-
-    // create 5 objects using the factory and store them in the vector
-    for (int i = 1; i <= 5; ++i)
-    {
-      // create an object that can be used in this scope only
-      Object o = objectFactoryFun();
-      // store the object in the vector v using move semantics;
-      // the lifetime of the object is extended over this scope
-      v.push_back(std::move(o));
-    }
-    // all elements in the vector have the same attribute values
-    for (auto&& item : v)
-    {
-      ASSERT_EQ(item.get()->get_x(), 99);
-      ASSERT_EQ(item.get()->get_y(), 88);
-      ASSERT_EQ(item.get()->get_z(), 77);
-    }
-  }  // the objects in the vector v are destroyed, going out of scope
+  ASSERT_EQ(tokens[0], "razzle");
+  ASSERT_EQ(tokens[1], "dazzle");
+  ASSERT_EQ(tokens[2], "giddyup");
 }
 
-TEST(uniquePtr2sharedPtr, test_1)
+TEST(strTokenizers, stringTokenizer_2)
 {
-  class A
+  using container = std::vector<std::string>;
+  const std::string s {"query2.lycos.cs.cmu.edu [29:23:53:36] \"GET /Consumer.html HTTP/1.0\" 200 1325"};
+  std::string token {};
+  container tokens {};
+  utilities::stringTokenizer st(s, " \"");
+
+  std::cout << "there are "
+            << st.countTokens( )
+            << " tokens"
+            << std::endl;
+
+  while ( st.hasMoreTokens( ) )
   {
-    mutable int _x{};
-    mutable int _y{};
-    mutable int _z{};
+    st.nextToken(token);
+    tokens.push_back(token);
+    std::cout << "token = '"
+              << token
+              << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "query2.lycos.cs.cmu.edu");
+  ASSERT_EQ(tokens[1], "[29:23:53:36]");
+  ASSERT_EQ(tokens[2], "GET");
+  ASSERT_EQ(tokens[3], "/Consumer.html");
+  ASSERT_EQ(tokens[4], "HTTP/1.0");
+  ASSERT_EQ(tokens[5], "200");
+  ASSERT_EQ(tokens[6], "1325");
+}
 
-   public:
-    [[maybe_unused]] explicit
-    A() noexcept
-    {
-      std::cout << "default constructor A(): ";
-      display_object();
-    }
+TEST(strTokenizers, strTokenize_1_1)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"123,qwerty;890 ; , ; ;;a"};
+  container tokens {};
 
-    [[maybe_unused]] explicit
-    A(const int& x) noexcept
-    :
-    _x(x)
-    {
-      std::cout << "constructor-1 A(x): ";
-      display_object();
-    }
+  utilities::strTokenize<container>(s, tokens, ",; ");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "123");
+  ASSERT_EQ(tokens[1], "qwerty");
+  ASSERT_EQ(tokens[2], "890");
+  ASSERT_EQ(tokens[3], "");
+  ASSERT_EQ(tokens[4], "");
+  ASSERT_EQ(tokens[5], "");
+  ASSERT_EQ(tokens[6], "");
+  ASSERT_EQ(tokens[7], "");
+  ASSERT_EQ(tokens[8], "");
+  ASSERT_EQ(tokens[9], "");
+  ASSERT_EQ(tokens[10], "");
+  ASSERT_EQ(tokens[11], "a");
+}
 
-    [[maybe_unused]] explicit
-    A(const int& x, const int& y) noexcept
-    :
-    _x(x),
-    _y(y)
-    {
-      std::cout << "constructor-2 A(x, y): ";
-      display_object();
-    }
+TEST(strTokenizers, strTokenize_1_2)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"query2.lycos.cs.cmu.edu [29:23:53:36] \"GET /Consumer.html HTTP/1.0\" 200 1325"};
+  container tokens {};
 
-    explicit
-    A(const int& x, const int& y, const int& z) noexcept
-    :
-    _x(x),
-    _y(y),
-    _z(z)
-    {
-      std::cout << "constructor-3 A(x, y, z): ";
-      display_object();
-    }
+  utilities::strTokenize<container>(s, tokens, " \"");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "query2.lycos.cs.cmu.edu");
+  ASSERT_EQ(tokens[1], "[29:23:53:36]");
+  ASSERT_EQ(tokens[2], "");
+  ASSERT_EQ(tokens[3], "GET");
+  ASSERT_EQ(tokens[4], "/Consumer.html");
+  ASSERT_EQ(tokens[5], "HTTP/1.0");
+  ASSERT_EQ(tokens[6], "");
+  ASSERT_EQ(tokens[7], "200");
+  ASSERT_EQ(tokens[8], "1325");
+}
 
-    int get_x() const noexcept
-    {
-      return _x;
-    }
-    int get_y() const noexcept
-    {
-      return _y;
-    }
-    int get_z() const noexcept
-    {
-      return _z;
-    }
+TEST(strTokenizers, strTokenize_2_1)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"123,qwerty;890 ; , ; ;;a"};
+  container tokens {};
 
-    void display_object (const std::string& prompt = "") const noexcept
-    {
-      std::cout << prompt
-                << "(x, y, z): ("
-                << get_x()
-                << ", "
-                << get_y()
-                << ", "
-                << get_z()
-                << ")"
-                << std::endl;
-    }
+  tokens = utilities::strTokenize<container>(s, ",; ");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "123");
+  ASSERT_EQ(tokens[1], "qwerty");
+  ASSERT_EQ(tokens[2], "890");
+  ASSERT_EQ(tokens[3], "");
+  ASSERT_EQ(tokens[4], "");
+  ASSERT_EQ(tokens[5], "");
+  ASSERT_EQ(tokens[6], "");
+  ASSERT_EQ(tokens[7], "");
+  ASSERT_EQ(tokens[8], "");
+  ASSERT_EQ(tokens[9], "");
+  ASSERT_EQ(tokens[10], "");
+  ASSERT_EQ(tokens[11], "a");
+}
 
-    A(const A& rhs) = delete;
-    A& operator=(const A& rhs) = delete;
+TEST(strTokenizers, strTokenize_2_2)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"query2.lycos.cs.cmu.edu [29:23:53:36] \"GET /Consumer.html HTTP/1.0\" 200 1325"};
+  container tokens {};
 
-    ~A()
-    {
-      std::cout << "Destroyed object: ";
-      display_object();
-    }
-  };  // class A
+  tokens = utilities::strTokenize<container>(s, "\" ");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "query2.lycos.cs.cmu.edu");
+  ASSERT_EQ(tokens[1], "[29:23:53:36]");
+  ASSERT_EQ(tokens[2], "");
+  ASSERT_EQ(tokens[3], "GET");
+  ASSERT_EQ(tokens[4], "/Consumer.html");
+  ASSERT_EQ(tokens[5], "HTTP/1.0");
+  ASSERT_EQ(tokens[6], "");
+  ASSERT_EQ(tokens[7], "200");
+  ASSERT_EQ(tokens[8], "1325");
+}
 
-  // create a unique_ptr that points to an A's object created using the object factory
-  std::unique_ptr<A> uptr = utilities::object_factory::createUniquePtr<A>(11, 22, 33);
-  uptr.get()->display_object("Object pointed by uptr: ");
-  ASSERT_NE(nullptr, uptr.get());
-  ASSERT_EQ(true, static_cast<bool>((uptr)));
-  ASSERT_EQ(true, uptr.operator bool());
-  ASSERT_EQ(11, uptr.get()->get_x());
-  ASSERT_EQ(22, uptr.get()->get_y());
-  ASSERT_EQ(33, uptr.get()->get_z());
+TEST(strTokenizers, strRegexTokenize_1)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"123,qwerty;890 ; , ; ;;a"};
+  container tokens {};
+  // the default regex is used
+  tokens = utilities::strRegexTokenize<container>(s);
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "123");
+  ASSERT_EQ(tokens[1], "qwerty");
+  ASSERT_EQ(tokens[2], "890");
+  ASSERT_EQ(tokens[3], "");
+  ASSERT_EQ(tokens[4], "");
+  ASSERT_EQ(tokens[5], "");
+  ASSERT_EQ(tokens[6], "");
+  ASSERT_EQ(tokens[7], "a");
+}
 
-  // create a shared pointer to the object: don't try to access the unique_ptr from now on
-  std::shared_ptr<A> shptr {utilities::object_factory::uniquePtr2sharedPtr(uptr)};
-  // display the object pointed by the shared pointer
-  shptr.get()->display_object("Object pointed by shptr: ");
+TEST(strTokenizers, strRegexTokenize_2)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"query2.lycos.cs.cmu.edu [29:23:53:36] \"GET /Consumer.html HTTP/1.0\" 200 1325"};
+  container tokens {};
+  tokens = utilities::strRegexTokenize<container>(s, R"(\s*[\ \"]\s*)");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "query2.lycos.cs.cmu.edu");
+  ASSERT_EQ(tokens[1], "[29:23:53:36]");
+  ASSERT_EQ(tokens[2], "GET");
+  ASSERT_EQ(tokens[3], "/Consumer.html");
+  ASSERT_EQ(tokens[4], "HTTP/1.0");
+  ASSERT_EQ(tokens[5], "200");
+  ASSERT_EQ(tokens[6], "1325");
+}
 
-  // now uptr.get() returns nullptr
-  ASSERT_EQ(nullptr, uptr.get());
-  ASSERT_EQ(false, static_cast<bool>((uptr)));
-  ASSERT_EQ(false, uptr.operator bool());
-  // the shared pointer must contain the moved data
-  ASSERT_EQ(11, shptr.get()->get_x());
-  ASSERT_EQ(22, shptr.get()->get_y());
-  ASSERT_EQ(33, shptr.get()->get_z());
-  ASSERT_EQ(1, shptr.use_count());
-  ASSERT_EQ(true, shptr.unique());
-  
-  // create a shared pointer from an invalid unique_ptr
-  std::shared_ptr<A> shptrBad {utilities::object_factory::uniquePtr2sharedPtr(uptr)};
-  // the shared pointer must be nullptr
-  ASSERT_EQ(nullptr, shptrBad.get());
-  ASSERT_EQ(false, static_cast<bool>((shptrBad)));
-  ASSERT_EQ(false, shptrBad.operator bool());
+TEST(strTokenizers, strRegexTokenize_3)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"www-c1.proxy.aol.com [30:00:03:05] \"GET /docs/Access HTTP/1.0\" 302 -"};
+  container tokens {};
+  tokens = utilities::strRegexTokenize<container>(s, R"(\s*[\ \"]\s*)");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "www-c1.proxy.aol.com");
+  ASSERT_EQ(tokens[1], "[30:00:03:05]");
+  ASSERT_EQ(tokens[2], "GET");
+  ASSERT_EQ(tokens[3], "/docs/Access");
+  ASSERT_EQ(tokens[4], "HTTP/1.0");
+  ASSERT_EQ(tokens[5], "302");
+  ASSERT_EQ(tokens[6], "-");
+}
+
+TEST(randomNumberGenerators, intRandomNumberGeneration_test)
+{
+  std::vector<int> intNums;
+  ASSERT_EQ(0, intNums.size());
+  std::cout << "size: " << intNums.size() << '\n';
+  std::cout << "max size: " << intNums.max_size() << '\n' << std::flush;
+  const unsigned int Max {100'000'000};
+  //nums.reserve(Max);
+  for (unsigned int i{}; i != Max; ++i)
+  {
+    //nums.emplace_back(get_random_fp(-99999.0, 99999.999999));
+    intNums.push_back(utilities::getRandomINT(-10'000, 10'000));
+  }
+
+  auto start = std::chrono::high_resolution_clock::now();
+  std::sort(intNums.begin(), intNums.end());
+  auto end = std::chrono::high_resolution_clock::now();
+  std::cout << Max
+            << " ints sorted in:\t"
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()
+            << " nsec"
+            << '\n';
+  for (auto&& i : intNums)
+  {
+    ASSERT_GE(i, -10'000);
+    ASSERT_LE(i, 10'000);
+  }
+  ASSERT_EQ(Max, intNums.size());
+  std::cout << "-----------\n";
+  std::cout << "size: " << intNums.size() << '\n';
+  std::cout << "max size: " << intNums.max_size() << "\n\n\n";
+}
+
+TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
+{
+  std::vector<double> fpNums;
+  ASSERT_EQ(0, fpNums.size());
+  std::cout << "size: " << fpNums.size() << '\n';
+  std::cout << "max size: " << fpNums.max_size() << '\n' << std::flush;
+  const unsigned int Max {100'000'000};
+  //nums.reserve(Max);
+  for (unsigned int i{}; i != Max; ++i)
+  {
+    //nums.emplace_back(get_random_fp(-99999.0, 99999.999999));
+    fpNums.push_back(utilities::getRandomFP(-99'999.0, 99'999.99999));
+  }
+
+  auto start = std::chrono::high_resolution_clock::now();
+  std::sort(fpNums.begin(), fpNums.end());
+  auto end = std::chrono::high_resolution_clock::now();
+  std::cout << Max
+            << " fp's sorted in:\t"
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()
+            << " nsec"
+            << '\n';
+  for (auto&& i : fpNums)
+  {
+    ASSERT_GE(i, -99'999);
+    ASSERT_LT(i, 99'999.99999);
+  }
+  ASSERT_EQ(Max, fpNums.size());
+  std::cout << "-----------\n";
+  std::cout << "size: " << fpNums.size() << '\n';
+  std::cout << "max size: " << fpNums.max_size() << "\n\n\n";
 }
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
