@@ -337,6 +337,17 @@ TEST(convertArrayToTuple, test_convertArrayToTuple)
   std::cout << w << '\n';
 }
 
+TEST(tprintf, test_tprintf)
+{
+  std::stringstream ss {};
+  utilities::tprintf(ss, "Format string provided without placeholders and args");
+  ASSERT_EQ(ss.str(), "Format string provided without placeholders and args");
+
+  ss.str("");
+  utilities::tprintf(ss, "% % % %\n", 123, "is", "a", "number.");
+  ASSERT_EQ(ss.str(), "123 is a number.\n");
+}
+
 TEST(perfTimer, test_perfTimer_1)
 {
   using namespace std::chrono_literals;
@@ -547,6 +558,30 @@ TEST(strTokenizers, strTokenize_2_2)
   ASSERT_EQ(tokens[8], "1325");
 }
 
+TEST(strTokenizers, strRegexTokenize_0)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"abc 1 234 ."};
+  container tokens {};
+  tokens = utilities::strRegexTokenize<container>(s, R""()"");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "");
+  ASSERT_EQ(tokens[1], "a");
+  ASSERT_EQ(tokens[2], "b");
+  ASSERT_EQ(tokens[3], "c");
+  ASSERT_EQ(tokens[4], " ");
+  ASSERT_EQ(tokens[5], "1");
+  ASSERT_EQ(tokens[6], " ");
+  ASSERT_EQ(tokens[7], "2");
+  ASSERT_EQ(tokens[8], "3");
+  ASSERT_EQ(tokens[9], "4");
+  ASSERT_EQ(tokens[10], " ");
+  ASSERT_EQ(tokens[11], ".");
+}
+
 TEST(strTokenizers, strRegexTokenize_1)
 {
   using container = std::vector<std::string>;
@@ -613,10 +648,9 @@ TEST(randomNumberGenerators, intRandomNumberGeneration_test)
   std::cout << "size: " << intNums.size() << '\n';
   std::cout << "max size: " << intNums.max_size() << '\n' << std::flush;
   const unsigned int Max {100'000'000};
-  //nums.reserve(Max);
+
   for (unsigned int i{}; i != Max; ++i)
   {
-    //nums.emplace_back(get_random_fp(-99999.0, 99999.999999));
     intNums.push_back(utilities::getRandomINT(-10'000, 10'000));
   }
 
@@ -646,10 +680,9 @@ TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
   std::cout << "size: " << fpNums.size() << '\n';
   std::cout << "max size: " << fpNums.max_size() << '\n' << std::flush;
   const unsigned int Max {100'000'000};
-  //nums.reserve(Max);
+
   for (unsigned int i{}; i != Max; ++i)
   {
-    //nums.emplace_back(get_random_fp(-99999.0, 99999.999999));
     fpNums.push_back(utilities::getRandomFP(-99'999.0, 99'999.99999));
   }
 

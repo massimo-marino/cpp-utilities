@@ -13,7 +13,7 @@ SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic 
 ####SET (CLANG_CXX_FLAGS "-Weverything -Wno-c++98-compat -fno-assume-sane-operator-new -fsanitize=undefined")
 #### settings for clang
 
-SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -std=c++1z -flto -mtune=native -march=native -m64 -Ofast -ffast-math -pthread -pedantic -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -I/usr/include -I/usr/local/include -I. -lm")
+SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -std=c++1z -flto -mtune=native -march=native -m64 -Ofast -ffast-math -pthread -pedantic -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -I/usr/include -I/usr/local/include -I. -lm -latomic -lstdc++fs")
 
 SET (CMAKE_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
 
@@ -175,7 +175,7 @@ MESSAGE( STATUS )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-SET( sources_list utilities.cpp cfile_helper.cpp concurrentLogging.cpp stringTokenizers.cpp )
+SET( sources_list utilities.cpp cfile_helper.cpp concurrentLogging.cpp stringTokenizers.cpp printHelpers.cpp )
 
 ADD_LIBRARY( utilities ${sources_list} )
 

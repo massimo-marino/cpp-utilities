@@ -10,7 +10,7 @@
 
 #include "cfile_helper.h"
 ////////////////////////////////////////////////////////////////////////////////
-namespace cfile_helper
+namespace utilities::cfile_helper
 {
 cfile_helper::cfile_helper (const std::string&       file_name,
                             const fstream_direction& fs_direction) noexcept(false)
@@ -22,7 +22,8 @@ m_file_is_open(false)
   open_file();
 }
 
-void cfile_helper::open_file () const noexcept(false)
+void
+cfile_helper::open_file () const noexcept(false)
 {
   std::ios_base::openmode mode;
   
@@ -54,30 +55,35 @@ cfile_helper::~cfile_helper ()
 }
 
 inline
-void cfile_helper::set_file_name (const std::string& file_name) const noexcept
+void
+cfile_helper::set_file_name (const std::string& file_name) const noexcept
 {
   m_file_name = file_name;
 }
 
 inline
-std::string cfile_helper::get_file_name () const noexcept
+std::string
+cfile_helper::get_file_name () const noexcept
 {
   return m_file_name;
 }
 
 inline
-void cfile_helper::set_fstream_direction (const fstream_direction& fs_direction) const noexcept
+void
+cfile_helper::set_fstream_direction (const fstream_direction& fs_direction) const noexcept
 {
   m_fs_direction = fs_direction;
 }
 
 inline constexpr
-cfile_helper::fstream_direction cfile_helper::get_fstream_direction () const noexcept
+cfile_helper::fstream_direction
+cfile_helper::get_fstream_direction () const noexcept
 {
   return m_fs_direction;
 }
 
-std::fstream& cfile_helper::open_file (const std::ios_base::openmode& mode) const noexcept(false)
+std::fstream&
+cfile_helper::open_file (const std::ios_base::openmode& mode) const noexcept(false)
 {
   set_fstream(get_file_name(), mode);
   if ( get_fstream().is_open() )
@@ -87,7 +93,8 @@ std::fstream& cfile_helper::open_file (const std::ios_base::openmode& mode) cons
   return get_fstream();
 }
 
-std::fstream& cfile_helper::open_input_file (const std::string& file_name) const noexcept(false)
+std::fstream&
+cfile_helper::open_input_file (const std::string& file_name) const noexcept(false)
 {
   set_file_name(file_name);
   set_fstream_direction(fstream_direction::fs_INPUT);
@@ -99,7 +106,8 @@ std::fstream& cfile_helper::open_input_file (const std::string& file_name) const
   return get_fstream();
 }
 
-std::fstream& cfile_helper::open_output_file (const std::string& file_name) const noexcept(false)
+std::fstream&
+cfile_helper::open_output_file (const std::string& file_name) const noexcept(false)
 {
   set_file_name(file_name);
   set_fstream_direction(fstream_direction::fs_OUTPUT);
@@ -111,64 +119,76 @@ std::fstream& cfile_helper::open_output_file (const std::string& file_name) cons
   return get_fstream();
 }
 
-void cfile_helper::set_fstream(const std::string& file_name, const std::ios_base::openmode& mode) const noexcept(false)
+void
+cfile_helper::set_fstream(const std::string& file_name, const std::ios_base::openmode& mode) const noexcept(false)
 {
   m_fstream = std::fstream{file_name, mode};
 }
 
-std::fstream& cfile_helper::get_fstream () const noexcept
+std::fstream&
+cfile_helper::get_fstream () const noexcept
 {
   return m_fstream;
 }
 
-void cfile_helper::close_file () const
+inline
+void
+cfile_helper::close_file () const
 {
   close_fstream();
 }
 
 inline constexpr
-void cfile_helper::close_fstream () const
+void
+cfile_helper::close_fstream () const
 {
   get_fstream().close();
   set_file_is_closed();
 }
 
 inline
-void cfile_helper::set_file_is_open () const noexcept
+void
+cfile_helper::set_file_is_open () const noexcept
 {
   m_file_is_open = true;
 }
 
 inline
-void cfile_helper::set_file_is_closed () const noexcept
+void
+cfile_helper::set_file_is_closed () const noexcept
 {
   m_file_is_open = false;
 }
 
-bool cfile_helper::is_file_open () const noexcept
+bool
+cfile_helper::is_file_open () const noexcept
 {
   return (true == m_file_is_open);
 }
 
 inline constexpr
-bool cfile_helper::is_file_closed () const noexcept
+bool
+cfile_helper::is_file_closed () const noexcept
 {
   return (false == m_file_is_open);
 }
 
 inline constexpr
-bool cfile_helper::is_eof_reached () const noexcept
+bool
+cfile_helper::is_eof_reached () const noexcept
 {
   return ( true == get_fstream().eof());
 }
 
 inline constexpr
-bool cfile_helper::is_eof_not_reached () const noexcept
+bool
+cfile_helper::is_eof_not_reached () const noexcept
 {
   return (false == get_fstream().eof());
 }
 
-std::streamoff cfile_helper::file_size() const
+std::streamoff
+cfile_helper::file_size() const
 {
   // save in a temp the current position of the stream
   std::fstream::pos_type current_pos = get_fstream().tellg();
@@ -185,7 +205,8 @@ std::streamoff cfile_helper::file_size() const
   return end_pos;
 }
 
-std::streamoff cfile_helper::file_size(std::fstream& f) const
+std::streamoff
+cfile_helper::file_size(std::fstream& f) const
 {
   // save in a temp the current position of the stream
   std::fstream::pos_type current_pos = f.tellg();
@@ -216,8 +237,9 @@ std::streamoff cfile_helper::file_size(std::fstream& f) const
 //          -6 if read()  throws an exception
 //          -7 if new     throws an exception
 //
-int cfile_helper::load_file_in_string (std::string&          string,
-                                       const std::streampos& pos) const noexcept(false)
+int
+cfile_helper::load_file_in_string (std::string&          string,
+                                   const std::streampos& pos) const noexcept(false)
 {
   if ( false == is_file_open() )
   {
@@ -284,4 +306,4 @@ int cfile_helper::load_file_in_string (std::string&          string,
 
   return(0);
 }
-}  // namespace cfile_helper
+}  // namespace utilities::cfile_helper

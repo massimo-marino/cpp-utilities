@@ -15,14 +15,16 @@ namespace utilities
 // insert an item of type T in a sorted container C
 // Pre-Condition: the container MUST be sorted
 template <typename C, typename T>
-void insertSorted(C &c, const T &item) noexcept
+void
+insertSorted(C &c, const T &item) noexcept
 {
-  const auto insert_pos (std::lower_bound(std::begin(c), std::end(c), item));
+  const auto insert_pos (std::lower_bound(std::cbegin(c), std::cend(c), item));
   c.insert(insert_pos, item);
 }
 
 template <typename K, typename V>
-auto insertInMap(std::map<K,V>& m, const K& key, const V& value) noexcept
+auto
+insertInMap(std::map<K,V>& m, const K& key, const V& value) noexcept
 {
   // C++17, not yet available
   //return m.try_emplace(key, value);
@@ -32,28 +34,32 @@ auto insertInMap(std::map<K,V>& m, const K& key, const V& value) noexcept
 }
 
 template <typename T>
-std::valarray<T> innerProduct(const std::valarray<T>& va1,
-                              const std::valarray<T>& va2) noexcept
+std::valarray<T>
+innerProduct(const std::valarray<T>& va1,
+             const std::valarray<T>& va2) noexcept
 {
   return (va1 * va2);
 }
 
 template <typename T>
-T dotProduct(const std::valarray<T>& va1,
-             const std::valarray<T>& va2) noexcept
+T
+dotProduct(const std::valarray<T>& va1,
+           const std::valarray<T>& va2) noexcept
 {
   return innerProduct(va1, va2).sum();
 }
 
 template<typename Array, std::size_t... I>
-decltype(auto) arrayToTuple_impl(const Array& a, std::index_sequence<I...>)
+decltype(auto)
+arrayToTuple_impl(const Array& a, std::index_sequence<I...>)
 {
   return std::make_tuple(a[I]...);
 }
 
 // Convert array into a tuple
 template<typename T, std::size_t N, typename Indices = std::make_index_sequence<N>>
-decltype(auto) arrayToTuple(const std::array<T, N>& a)
+decltype(auto)
+arrayToTuple(const std::array<T, N>& a)
 {
   return arrayToTuple_impl(a, Indices{});
 }

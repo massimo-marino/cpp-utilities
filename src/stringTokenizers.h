@@ -139,13 +139,13 @@ Container
 strRegexTokenize(const std::string& str,
                  const std::string& regExStr = R"(\s*[,;]\s*)") noexcept
 {
-  std::regex regEx {regExStr};
   Container container {};
   
   if ( str.empty() )
   {
     return container;
   }
+  std::regex regEx {regExStr};
   const std::sregex_token_iterator end;
   for (std::sregex_token_iterator iter {str.cbegin(), str.cend(), regEx, -1};
        iter != end;

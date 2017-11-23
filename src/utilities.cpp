@@ -23,5 +23,4 @@ void removeMultipleOccurrences(std::string& s) noexcept
 {
   s.erase(std::unique(std::begin(s), std::end(s)), end(s));
 }
-
 }  // namespace utilities

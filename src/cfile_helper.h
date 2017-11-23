@@ -14,7 +14,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpadded"
 ////////////////////////////////////////////////////////////////////////////////
-namespace cfile_helper
+namespace utilities::cfile_helper
 {
 class cfile_helper final
 {
@@ -67,7 +67,7 @@ class cfile_helper final
   inline void set_fstream_direction (const fstream_direction& fs_direction) const noexcept;
   inline constexpr fstream_direction get_fstream_direction () const noexcept;
 };  // class cfile_helper
-}  // namespace cfile_helper
+}  // namespace utilities::cfile_helper
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here

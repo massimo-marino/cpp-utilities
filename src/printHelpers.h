@@ -8,6 +8,8 @@
 #ifndef PRINTHELPERS_H
 #define PRINTHELPERS_H
 
+#include <iostream>
+#include <sstream>
 #include <map>
 #include <valarray>
 #include <deque>
@@ -15,7 +17,8 @@
 namespace utilities
 {
 template <typename T>
-void printVectorElements (const std::vector<T>& v) noexcept
+void
+printVectorElements (const std::vector<T>& v) noexcept
 {
   if ( true == v.empty() )
   {
@@ -28,12 +31,13 @@ void printVectorElements (const std::vector<T>& v) noexcept
   };
 
   std::cout << "[ ";
-  std::for_each(std::begin(v), std::end(v), printItem);
+  std::for_each(v.cbegin(), v.cend(), printItem);
   std::cout << "]" << std::endl;
 }
 
 template <typename T>
-void printDequeElements (const std::deque<T>& v) noexcept
+void
+printDequeElements (const std::deque<T>& v) noexcept
 {
   if ( true == v.empty() )
   {
@@ -46,12 +50,13 @@ void printDequeElements (const std::deque<T>& v) noexcept
   };
 
   std::cout << "[ ";
-  std::for_each(std::begin(v), std::end(v), printItem);
+  std::for_each(v.cbegin(), v.cend(), printItem);
   std::cout << "]" << std::endl;
 }
 
 template <typename T>
-void printValarrayElements (const std::valarray<T>& va) noexcept
+void
+printValarrayElements (const std::valarray<T>& va) noexcept
 {
   if ( 0 == va.size() )
   {
@@ -64,12 +69,13 @@ void printValarrayElements (const std::valarray<T>& va) noexcept
   };
 
   std::cout << "[ ";
-  std::for_each(std::begin(va), std::end(va), printItem);
+  std::for_each(std::cbegin(va), std::cend(va), printItem);
   std::cout << "]" << std::endl;
 }
 
 template <typename C>
-void printContainerElements (const C& c) noexcept
+void
+printContainerElements (const C& c) noexcept
 {
   if ( true == c.empty() )
   {
@@ -82,12 +88,13 @@ void printContainerElements (const C& c) noexcept
   };
 
   std::cout << "[ ";
-  std::for_each(std::begin(c), std::end(c), printItem);
+  std::for_each(c.cbegin(), c.cend(), printItem);
   std::cout << "]" << std::endl;
 }
 
 template <typename T, typename U>
-void printMapElements (const std::map<T,U>& m) noexcept
+void
+printMapElements (const std::map<T,U>& m) noexcept
 {
   if ( true == m.empty() )
   {
@@ -105,9 +112,10 @@ void printMapElements (const std::map<T,U>& m) noexcept
 }
 
 template<class Ch, class Tr, class Tuple, std::size_t... Is>
-void printTuple(std::basic_ostream<Ch,Tr>& os,
-                const Tuple& t,
-                std::index_sequence<Is...>)
+void
+printTuple(std::basic_ostream<Ch,Tr>& os,
+           const Tuple& t,
+           std::index_sequence<Is...>)
 {
   ((os << (Is == 0? "" : ", ") << std::get<Is>(t)), ...);
 }
@@ -115,14 +123,16 @@ void printTuple(std::basic_ostream<Ch,Tr>& os,
 
 // overload << stream operator for std::pair's
 template <typename T, typename U>
-std::ostream& operator<<(std::ostream &os, const std::pair<T,U>& p)
+std::ostream&
+operator<<(std::ostream &os, const std::pair<T,U>& p)
 {
   return os << "[" << p.first << ", " << p.second <<  "]";
 }
 
 // overload << stream operator for std::valarray's
 template <typename T>
-std::ostream& operator<<(std::ostream &os, const std::valarray<T>& va)
+std::ostream&
+operator<<(std::ostream &os, const std::valarray<T>& va)
 {
   if ( 0 == va.size() )
   {
@@ -135,14 +145,15 @@ std::ostream& operator<<(std::ostream &os, const std::valarray<T>& va)
   };
 
   os << "[ ";
-  std::for_each(std::begin(va), std::end(va), printItem);
+  std::for_each(std::cbegin(va), std::cend(va), printItem);
   os << "]";
   return os;
 }
 
 // overload << stream operator for std::vector's
 template <typename T>
-std::ostream& operator<<(std::ostream &os, const std::vector<T>& v)
+std::ostream&
+operator<<(std::ostream &os, const std::vector<T>& v)
 {
   if ( 0 == v.size() )
   {
@@ -155,14 +166,15 @@ std::ostream& operator<<(std::ostream &os, const std::vector<T>& v)
   };
   
   os << "[ ";
-  std::for_each(std::begin(v), std::end(v), printItem);
+  std::for_each(v.cbegin(), v.cend(), printItem);
   os << "]";
   return os;
 }
 
 // overload << stream operator for std::vector's
 template <typename T>
-std::ostream& operator<<(std::ostream &os, const std::deque<T>& v)
+std::ostream&
+operator<<(std::ostream &os, const std::deque<T>& v)
 {
   if ( 0 == v.size() )
   {
@@ -175,14 +187,14 @@ std::ostream& operator<<(std::ostream &os, const std::deque<T>& v)
   };
   
   os << "[ ";
-  std::for_each(std::begin(v), std::end(v), printItem);
+  std::for_each(v.cbegin(), v.cend(), printItem);
   os << "]";
   return os;
 }
 
 template<class Ch, class Tr, class... Args>
-decltype(auto) operator<<(std::basic_ostream<Ch, Tr>& os,
-                          const std::tuple<Args...>& t)
+decltype(auto)
+operator<<(std::basic_ostream<Ch, Tr>& os, const std::tuple<Args...>& t)
 {
   os << "[";
   utilities::printTuple(os, t, std::index_sequence_for<Args...>{});
@@ -192,10 +204,34 @@ decltype(auto) operator<<(std::basic_ostream<Ch, Tr>& os,
 namespace utilities
 {
 template <typename T, typename ... Ts>
-void printArgs(std::ostream& os, const T& v, const Ts& ...vs)
+void
+printArgs(std::ostream& os, const T& v, const Ts& ...vs)
 {
   os << v;
   (void)std::initializer_list<int>{((os << ", " << vs), 0)...};
+}
+ 
+// tprintf: templated printf
+// base function
+void
+tprintf(std::ostream& os, const char* format) noexcept;
+
+// tprintf: recursive variadic function
+template<typename T, typename... Targs>
+void
+tprintf(std::ostream& os, const char* format, T value, Targs... Fargs) noexcept
+{
+  for ( ; '\0' != *format; ++format )
+  {
+    if ( '%' == *format )
+    {
+      os << value;
+      // recursive call
+      tprintf(os, format + 1, Fargs...);
+      return;
+    }
+    os << *format;
+  }
 }
 }  // namespace utilities
 

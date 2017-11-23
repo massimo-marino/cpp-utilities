@@ -27,7 +27,8 @@ void removeMultipleOccurrences(std::string& s) noexcept;
 ////////////////////////////////////////////////////////////////////////////////
 // check if all the parameters are within a certain range
 template <typename T, typename ... Ts>
-bool within(const T& min, const T& max, const Ts& ...ts) noexcept
+bool
+within(const T& min, const T& max, const Ts& ...ts) noexcept
 {
   return ((min <= ts && ts <= max) && ...);
 }
@@ -38,7 +39,9 @@ template <typename Time = std::chrono::nanoseconds,
 struct perftimer
 {
   template <typename F, typename... Args>
-  static inline Time duration(F&& f, Args&&... args)
+  static inline
+  Time
+  duration(F&& f, Args&&... args)
   {
     auto start = Clock::now();
     // C++17: not yet available
