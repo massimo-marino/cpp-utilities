@@ -128,9 +128,9 @@ TEST(insertAllHelper, test_insertAll)
 {
   std::vector<int> v {};
   
-  ASSERT_EQ(0, v.size());
+  ASSERT_EQ(static_cast<size_t>(0), v.size());
   utilities::insertAll(v);
-  ASSERT_EQ(0, v.size());
+  ASSERT_EQ(static_cast<size_t>(0), v.size());
 
   utilities::insertAll(v, 1, 2, 3, 4, 5);
   ASSERT_EQ(5, v.size());
@@ -166,7 +166,7 @@ TEST(quickRemoveHelper, test_quickRemove_from_unsorted_vector)
     utilities::quickRemoveAt(w, std::find(std::begin(w), std::end(w), 123));
     utilities::quickRemove(w, 1233);
 
-    ASSERT_EQ(0, w.size());
+    ASSERT_EQ(static_cast<size_t>(0), w.size());
   }
   {
     std::vector<int> y {2, 3, 4, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5};
@@ -183,7 +183,7 @@ TEST(quickRemoveHelper, test_quickRemove_from_unsorted_vector)
 
     utilities::quickRemove(q, 1);
 
-    ASSERT_EQ(0, q.size());
+    ASSERT_EQ(static_cast<size_t>(0), q.size());
   }
 }
 
@@ -205,7 +205,7 @@ TEST(remove_allItemsHelper, test_removeAllItems_2)
 
   utilities::removeAllItems(v, 4);
 
-  ASSERT_EQ(0, v.size());
+  ASSERT_EQ(static_cast<size_t>(0), v.size());
 }
 
 TEST(insertSortedHelper, test_insertSorted)
@@ -231,11 +231,11 @@ TEST(insertSortedHelper, test_insertSorted)
 TEST(insertInMapHelper, test_insertInMap)
 {
   std::map<std::string, int> m;
-  ASSERT_EQ(0, m.size());
+  ASSERT_EQ(static_cast<size_t>(0), m.size());
 
   // trying to get an item from a map creates a new element if the item does not exist yet
   int item = m["A"];
-  ASSERT_EQ(0, item);
+  ASSERT_EQ(int {0}, item);
   ASSERT_EQ(1, m.size());
   utilities::printMapElements(m);
 
@@ -344,8 +344,8 @@ TEST(tprintf, test_tprintf)
   ASSERT_EQ(ss.str(), "Format string provided without placeholders and args");
 
   ss.str("");
-  utilities::tprintf(ss, "% % % %\n", 123, "is", "a", "number.");
-  ASSERT_EQ(ss.str(), "123 is a number.\n");
+  utilities::tprintf(ss, "% % not % big %\n", 123, "is", "a", "number.");
+  ASSERT_EQ(ss.str(), "123 is not a big number.\n");
 }
 
 TEST(perfTimer, test_perfTimer_1)
@@ -644,7 +644,7 @@ TEST(strTokenizers, strRegexTokenize_3)
 TEST(randomNumberGenerators, intRandomNumberGeneration_test)
 {
   std::vector<int> intNums;
-  ASSERT_EQ(0, intNums.size());
+  ASSERT_EQ(static_cast<size_t>(0), intNums.size());
   std::cout << "size: " << intNums.size() << '\n';
   std::cout << "max size: " << intNums.max_size() << '\n' << std::flush;
   const unsigned int Max {100'000'000};
@@ -676,7 +676,7 @@ TEST(randomNumberGenerators, intRandomNumberGeneration_test)
 TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
 {
   std::vector<double> fpNums;
-  ASSERT_EQ(0, fpNums.size());
+  ASSERT_EQ(static_cast<size_t>(0), fpNums.size());
   std::cout << "size: " << fpNums.size() << '\n';
   std::cout << "max size: " << fpNums.max_size() << '\n' << std::flush;
   const unsigned int Max {100'000'000};
@@ -703,6 +703,41 @@ TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
   std::cout << "-----------\n";
   std::cout << "size: " << fpNums.size() << '\n';
   std::cout << "max size: " << fpNums.max_size() << "\n\n\n";
+}
+
+struct Hi  // has a "sayHi" member
+{
+  void sayHi() { std::cout << "Hi there!" << std::endl; }
+};
+
+struct Bye  // doesn't have a "sayHi" member
+{
+  void sayBye() { std::cout << "Bye bye!" << std::endl; }
+};
+
+// define a "sayHi" "member checker" class
+define_has_member(sayHi);
+// define a "sayBye" "member checker" class
+define_has_member(sayBye);
+
+TEST(hasMember, hasMember_test_1)
+{
+  Hi a;
+  Bye b;
+
+  // check the existence of "sayHi"
+  ASSERT_EQ(has_member(Hi, sayHi), true);
+  ASSERT_EQ(has_member(Bye, sayHi), false);
+  // check the existence of "sayBye"
+  ASSERT_EQ(has_member(Hi, sayBye), false);
+  ASSERT_EQ(has_member(Bye, sayBye), true);
+
+  // same thing, using decltype on instances
+  ASSERT_EQ(has_member(decltype(a), sayHi), true);
+  ASSERT_EQ(has_member(decltype(b), sayHi), false);
+  // same thing, using decltype on instances
+  ASSERT_EQ(has_member(decltype(a), sayBye), false);
+  ASSERT_EQ(has_member(decltype(b), sayBye), true);
 }
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop

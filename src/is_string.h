@@ -4,9 +4,7 @@
  *
  * Created on October 17, 2017, 1:54 PM
  */
-
-#ifndef IS_STRING_H
-#define IS_STRING_H
+#pragma once
 
 #include <string>
 
@@ -49,4 +47,3 @@ struct is_string
 };
 
 }  // namespace utilities
-#endif /* IS_STRING_H */

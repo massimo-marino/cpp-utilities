@@ -4,9 +4,7 @@
  *
  * Created on October 13, 2017, 9:29 AM
  */
-
-#ifndef CONTAINERHELPERS_H
-#define CONTAINERHELPERS_H
+#pragma once
 
 #include <map>
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +63,3 @@ arrayToTuple(const std::array<T, N>& a)
 }
 
 }  // namespace utilities
-
-#endif /* CONTAINERHELPERS_H */
-

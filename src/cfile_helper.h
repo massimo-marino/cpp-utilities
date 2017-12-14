@@ -4,9 +4,7 @@
  *
  * Created on November 3, 2016, 11:52 AM
  */
-
-#ifndef CFILE_HELPER_H
-#define CFILE_HELPER_H
+#pragma once
 
 #include <fstream>
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,4 +69,3 @@ class cfile_helper final
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here
-#endif /* CFILE_HELPER_H */

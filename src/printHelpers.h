@@ -4,9 +4,7 @@
  *
  * Created on October 13, 2017, 8:36 AM
  */
-
-#ifndef PRINTHELPERS_H
-#define PRINTHELPERS_H
+#pragma once
 
 #include <iostream>
 #include <sstream>
@@ -234,6 +232,3 @@ tprintf(std::ostream& os, const char* format, T value, Targs... Fargs) noexcept
   }
 }
 }  // namespace utilities
-
-#endif /* PRINTHELPERS_H */
-

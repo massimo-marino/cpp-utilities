@@ -9,7 +9,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
-void yieldCPUAndSleep (const int64_t& nanoseconds) noexcept
+void
+yieldCPUAndSleep (const int64_t& nanoseconds) noexcept
 {
   std::this_thread::yield();
   if ( 0 == nanoseconds )
@@ -19,7 +20,8 @@ void yieldCPUAndSleep (const int64_t& nanoseconds) noexcept
   std::this_thread::sleep_for(std::chrono::nanoseconds(nanoseconds));
 }
 
-void removeMultipleOccurrences(std::string& s) noexcept
+void
+removeMultipleOccurrences(std::string& s) noexcept
 {
   s.erase(std::unique(std::begin(s), std::end(s)), end(s));
 }

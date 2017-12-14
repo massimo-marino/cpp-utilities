@@ -4,9 +4,7 @@
  *
  * Created on October 13, 2017, 8:58 AM
  */
-
-#ifndef VECTORHELPERS_H
-#define VECTORHELPERS_H
+#pragma once
 
 #include <vector>
 #include <algorithm>
@@ -71,6 +69,3 @@ removeAllItems (std::vector<T>& v, const T& item) noexcept
 }
 
 }  // namespace utilities
-
-#endif /* VECTORHELPERS_H */
-

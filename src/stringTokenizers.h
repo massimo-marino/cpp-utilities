@@ -4,9 +4,7 @@
  *
  * Created on November 21, 2017, 5:57 PM
  */
-
-#ifndef STRINGTOKENIZERS_H
-#define STRINGTOKENIZERS_H
+#pragma once
 
 #include <string>
 #include <regex>
@@ -156,4 +154,3 @@ strRegexTokenize(const std::string& str,
   return container;
 }
 }  // namespace utilities
-#endif /* STRINGTOKENIZERS_H */

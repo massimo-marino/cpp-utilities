@@ -4,9 +4,7 @@
  *
  * Created on October 04, 2017, 10:43 AM
  */
-
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#pragma once
 
 #include "cfile_helper.h"
 #include "concurrentLogging.h"
@@ -15,6 +13,8 @@
 #include "printHelpers.h"
 #include "stringTokenizers.h"
 #include "randomNumberGenerators.h"
+#include "hasMember.h"
+#include "perfTimer.h"
 
 #include <thread>
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,27 +33,4 @@ within(const T& min, const T& max, const Ts& ...ts) noexcept
   return ((min <= ts && ts <= max) && ...);
 }
 ////////////////////////////////////////////////////////////////////////////////
-// a simple function's performance timer
-template <typename Time = std::chrono::nanoseconds,
-          typename Clock = std::chrono::high_resolution_clock>
-struct perftimer
-{
-  template <typename F, typename... Args>
-  static inline
-  Time
-  duration(F&& f, Args&&... args)
-  {
-    auto start = Clock::now();
-    // C++17: not yet available
-    //std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
-    f(std::forward<Args>(args)...);
-    auto end = Clock::now();
-
-    return std::chrono::duration_cast<Time>(end - start);
-  }
-};
-////////////////////////////////////////////////////////////////////////////////
 }  // namespace utilities
-
-////////////////////////////////////////////////////////////////////////////////
-#endif /* UTILITIES_H */

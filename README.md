@@ -1,12 +1,16 @@
 # utilities
 
-A set of C++1z (C++17) utilities.
+A set of utilities.
 
 ## Requirements
 
-The cmake file compiles with `-std=c++1z`.
+`cmake` is used to compile the sources.
 
-The unit tests are implemented in googletest: be sure you have installed googletest to compile.
+The default compiler used is `clang++-5.0`.
+
+The cmake files compile with `-std=c++17`.
+
+The unit tests are implemented in `googletest`: be sure you have installed `googletest` to compile.
 
 
 ## Install and Run Unit Tests
