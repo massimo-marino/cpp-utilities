@@ -9,15 +9,28 @@
 #include "cfile_helper.h"
 #include "concurrentLogging.h"
 #include "containerHelpers.h"
-#include "vectorHelpers.h"
-#include "printHelpers.h"
-#include "stringTokenizers.h"
-#include "randomNumberGenerators.h"
 #include "hasMember.h"
 #include "perfTimer.h"
+#include "printHelpers.h"
+#include "randomNumberGenerators.h"
+#include "stringTokenizers.h"
+#include "tprintf.h"
+#include "vectorHelpers.h"
 
 #include <thread>
 ////////////////////////////////////////////////////////////////////////////////
+#ifndef DEBUG_LOG_MACROS
+#define DEBUG_LOG_MACROS
+// macros L and LL give the same result
+#define L std::cout << "[" << __FILE__ << ":" << __LINE__ << ": " << __func__ << "]: "
+#define LL [](const std::string& function) {std::cout << "[" << __FILE__ << ":" << __LINE__ << ": " << function << "]: ";}(__func__)
+// macros LMSG and LLMSG give the same result
+#define LMSG(msg) std::cout << "[" << __FILE__ << ":" << __LINE__ << ": " << __func__ << "]: " << msg << std::endl
+#define LLMSG(msg) [](const std::string& function, const std::string& s) {std::cout << "[" << __FILE__ << ":" << __LINE__ << ": " << function << "]: "<< s  << std::endl;}(__func__, msg)
+#else
+#error "DEBUG_LOG_MACROS symbol already defined!"
+#endif
+
 namespace utilities
 {
 

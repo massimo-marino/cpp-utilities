@@ -8,7 +8,6 @@
 #include "../utilities.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-
 #include <experimental/string_view>
 
 using namespace ::testing;
@@ -224,6 +223,12 @@ TEST(insertSortedHelper, test_insertSorted)
   utilities::insertSorted(v, 67);
   utilities::insertSorted(v, 23);
   ASSERT_EQ(true, std::is_sorted(std::begin(v), std::end(v)));
+  std::vector<int> expectedVector {-35, -25, -20, -15, -10, -4, -3, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 23, 45, 67};
+  ASSERT_EQ(v.size(), expectedVector.size());
+  for (auto i {0}; i < v.size(); ++i)
+  {
+    ASSERT_EQ(v[i], expectedVector[i]);
+  }
   utilities::printVectorElements(v);
   utilities::printContainerElements(v);
 }
@@ -340,12 +345,26 @@ TEST(convertArrayToTuple, test_convertArrayToTuple)
 TEST(tprintf, test_tprintf)
 {
   std::stringstream ss {};
-  utilities::tprintf(ss, "Format string provided without placeholders and args");
-  ASSERT_EQ(ss.str(), "Format string provided without placeholders and args");
+  utilities::tprintf(ss, "0> Format string provided without placeholders and args\n");
+  ASSERT_TRUE(ss.str() == "0> Format string provided without placeholders and args\n");
 
   ss.str("");
-  utilities::tprintf(ss, "% % not % big %\n", 123, "is", "a", "number.");
-  ASSERT_EQ(ss.str(), "123 is not a big number.\n");
+  utilities::tprintf(ss, "0> % % not % big %\n", 123, "is", "a", "number.");
+  ASSERT_TRUE(ss.str() == "0> 123 is not a big number.\n");
+
+  ss.str("");
+  utilities::tprintf(ss, static_cast<std::string>("1> Format string provided without placeholders and args\n"));
+  ASSERT_TRUE(ss.str() == "1> Format string provided without placeholders and args\n");
+
+  ss.str("");
+  utilities::tprintf(ss, static_cast<std::string>("1> % % not % big %\n"), 123, "is", "a", "number.");
+  ASSERT_TRUE(ss.str() == "1> 123 is not a big number.\n");
+
+  utilities::tprintf("2> Format string provided without placeholders and args\n");
+  utilities::tprintf("2> % % not % big %\n", 123, "is", "a", "number.");
+
+  utilities::tprintf(static_cast<std::string>("3> Format string provided without placeholders and args\n"));
+  utilities::tprintf(static_cast<std::string>("3> % % not % big %\n"), 123, "is", "a", "number.");
 }
 
 TEST(perfTimer, test_perfTimer_1)

@@ -15,7 +15,7 @@ namespace utilities
 {
 template <typename T>
 std::string
-type (void)
+type ()
 {
   std::string result;
   int         status;

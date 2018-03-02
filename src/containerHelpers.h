@@ -6,7 +6,10 @@
  */
 #pragma once
 
+#include <tuple>
 #include <map>
+#include <array>
+#include <valarray>
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
@@ -14,7 +17,7 @@ namespace utilities
 // Pre-Condition: the container MUST be sorted
 template <typename C, typename T>
 void
-insertSorted(C &c, const T &item) noexcept
+insertSorted(C& c, const T& item) noexcept
 {
   const auto insert_pos (std::lower_bound(std::cbegin(c), std::cend(c), item));
   c.insert(insert_pos, item);

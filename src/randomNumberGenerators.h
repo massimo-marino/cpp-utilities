@@ -42,10 +42,9 @@ namespace utilities
 template <typename T = double>
 const
 T
-getRandomFP(const T min, const T max) noexcept
+getRandomFP(T min, T max) noexcept
 {
-  static_assert((true == std::is_floating_point<T>::value),
-                 "a floating point type required.");
+  static_assert(std::is_floating_point<T>::value != 0, "a floating point type required.");
 
   // used to obtain a seed for the random number engine
   std::random_device rd;
@@ -64,8 +63,7 @@ const
 T
 getRandomINT(const T min, const T max) noexcept
 {
-  static_assert((true == std::is_integral<T>::value),
-                 "an integral type required.");
+  static_assert(std::is_integral<T>::value != 0, "an integral type required.");
 
   // will be used to obtain a seed for the random number engine
   std::random_device rd;

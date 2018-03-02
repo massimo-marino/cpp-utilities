@@ -16,16 +16,16 @@
 ///
 /// This template can be used to check if its "T" argument
 /// has a data or function member called "member_name"
-#define define_has_member(member_name)                                       \
-  template <typename T>                                                      \
-  class has_member_##member_name                                             \
-  {                                                                          \
-      using yes_type = char;                                                 \
-      using no_type = long;                                                  \
-      template <typename U> static yes_type test(decltype(&U::member_name)); \
-      template <typename U> static no_type  test(...);                       \
-  public:                                                                    \
-      static constexpr bool value = sizeof(test<T>(nullptr)) == sizeof(yes_type);  \
+#define define_has_member(member_name)                                     \
+  template <typename T>                                                    \
+  class has_member_##member_name                                           \
+  {                                                                        \
+    using yes_type = char;                                                 \
+    using no_type = long;                                                  \
+    template <typename U> static yes_type test(decltype(&U::member_name)); \
+    template <typename U> static no_type  test(...);                       \
+   public:                                                                 \
+    static constexpr bool value = sizeof(test<T>(nullptr)) == sizeof(yes_type); \
   }
 
 /// Shorthand for testing if "class_" has a member called "member_name"
@@ -33,4 +33,3 @@
 /// @note "define_has_member(member_name)" must be used
 ///       before calling "has_member(class_, member_name)"
 #define has_member(class_, member_name)  has_member_##member_name<class_>::value
-

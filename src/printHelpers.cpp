@@ -8,10 +8,4 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
-// tprintf: templated printf
-void
-tprintf(std::ostream& os, const char* format) noexcept // base function
-{
-  os << format;
-}
 }  // namespace utilities

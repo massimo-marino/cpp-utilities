@@ -9,8 +9,10 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include <vector>
 #include <valarray>
 #include <deque>
+#include <algorithm>
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
@@ -18,7 +20,7 @@ template <typename T>
 void
 printVectorElements (const std::vector<T>& v) noexcept
 {
-  if ( true == v.empty() )
+  if (v.empty())
   {
     return;
   }
@@ -37,7 +39,7 @@ template <typename T>
 void
 printDequeElements (const std::deque<T>& v) noexcept
 {
-  if ( true == v.empty() )
+  if (v.empty())
   {
     return;
   }
@@ -94,7 +96,7 @@ template <typename T, typename U>
 void
 printMapElements (const std::map<T,U>& m) noexcept
 {
-  if ( true == m.empty() )
+  if (m.empty())
   {
     return;
   }
@@ -207,28 +209,5 @@ printArgs(std::ostream& os, const T& v, const Ts& ...vs)
 {
   os << v;
   (void)std::initializer_list<int>{((os << ", " << vs), 0)...};
-}
- 
-// tprintf: templated printf
-// base function
-void
-tprintf(std::ostream& os, const char* format) noexcept;
-
-// tprintf: recursive variadic function
-template<typename T, typename... Targs>
-void
-tprintf(std::ostream& os, const char* format, T value, Targs... Fargs) noexcept
-{
-  for ( ; '\0' != *format; ++format )
-  {
-    if ( '%' == *format )
-    {
-      os << value;
-      // recursive call
-      tprintf(os, format + 1, Fargs...);
-      return;
-    }
-    os << *format;
-  }
 }
 }  // namespace utilities
