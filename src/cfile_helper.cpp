@@ -230,7 +230,7 @@ cfile_helper::file_size(std::fstream& f) const
 //
 // Returns:  0 if OK
 //          -1 if file is not open
-//          -2 if the memory's size to be allocated is negative
+//          -2 if the memory's size to be allocated is <= 0
 //          -3 if seekg() throws an exception
 //          -4 if tellg() throws an exception
 //          -5 if seekg() throws an exception
@@ -266,7 +266,7 @@ cfile_helper::load_file_in_string (std::string&          string,
     return (-4);
   }
 
-  if ( (static_cast<signed long>(uiFile_Size) - static_cast<signed long>(pos)) < 0 )
+  if ( (static_cast<signed long>(uiFile_Size) - static_cast<signed long>(pos)) <= 0 )
   {
     return (-2);  
   }

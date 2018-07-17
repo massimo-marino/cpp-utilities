@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
 PROJECT( cppUtilities-unit-tests )
 

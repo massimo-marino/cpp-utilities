@@ -17,7 +17,9 @@
 #include "tprintf.h"
 #include "vectorHelpers.h"
 
+#include <iomanip>
 #include <thread>
+#include <cxxabi.h>
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef DEBUG_LOG_MACROS
 #define DEBUG_LOG_MACROS
@@ -37,11 +39,83 @@ namespace utilities
 void yieldCPUAndSleep (const int64_t& nanoseconds = 0) noexcept;
 void removeMultipleOccurrences(std::string& s) noexcept;
 
+template <typename T>
+std::string
+getDemangledTypeName() noexcept;
+
+template <typename T>
+std::string
+getDemangledTypeName() noexcept
+{
+  int   status{};
+  char* demangledName {abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status)};
+  std::string demangledNameString {static_cast<std::string>(demangledName)};
+
+  free(demangledName);
+  return demangledNameString;
+  //return static_cast<std::string>(typeid(T).name());
+}
+
+// FP1, FP2 := float, double, long double
+template <typename FP1, typename FP2>
+auto
+fpEqual(const FP1 arg1,
+        const FP2 arg2,
+        const long double E = static_cast<long double>(1.e-20),
+        const bool verbose = false) noexcept -> bool;
+
+// see: https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
+// this code implements an easy and dirty solution
+template<typename FP1, typename FP2>
+auto
+fpEqual(const FP1 arg1,
+        const FP2 arg2,
+        const long double E,
+        const bool verbose) noexcept -> bool
+{
+  // compile-time type check
+  static_assert(std::is_floating_point<FP1>::value, "ERROR: fpEqual() needs floating points arguments but arg1 is not");
+  static_assert(std::is_floating_point<FP2>::value, "ERROR: fpEqual() needs floating points arguments but arg2 is not");
+  static_assert(std::is_same<FP1, FP2>::value, "ERROR: fpEqual() needs two floating point arguments of the same type");
+
+  // display the type names
+  if ( verbose )
+  {
+    const auto tn1 = getDemangledTypeName<FP1>();
+    const auto tn2 = getDemangledTypeName<FP2>();
+    std::cerr << "arg1 type: "
+              << tn1
+              << "\narg2 type: "
+              << tn2
+              << "\n"
+              << std::setprecision(36)
+              << "arg1: "
+              << arg1
+              << "\narg2: "
+              << arg2
+              << "\nfabsl(arg1 - arg2): "
+              << fabsl(static_cast<long double>(arg1) - static_cast<long double>(arg2))
+              << "\n";
+  }
+
+  // use fabsl() NOT abs()
+  return fabsl(static_cast<long double>(arg1) - static_cast<long double>(arg2)) < E;
+}
+
+bool isLittleEndian () noexcept;
+bool isBigEndian () noexcept;
+
+unsigned int replaceByte (unsigned int&& x, const int i, const unsigned char b) noexcept(false);
+
 ////////////////////////////////////////////////////////////////////////////////
 // check if all the parameters are within a certain range
 template <typename T, typename ... Ts>
 bool
-within(const T& min, const T& max, const Ts& ...ts) noexcept
+within(const T& min, const T& max, const Ts& ...ts) noexcept;
+
+template<typename T, typename... Ts>
+bool
+within(const T &min, const T &max, const Ts &... ts) noexcept
 {
   return ((min <= ts && ts <= max) && ...);
 }

@@ -666,7 +666,7 @@ TEST(randomNumberGenerators, intRandomNumberGeneration_test)
   ASSERT_EQ(static_cast<size_t>(0), intNums.size());
   std::cout << "size: " << intNums.size() << '\n';
   std::cout << "max size: " << intNums.max_size() << '\n' << std::flush;
-  const unsigned int Max {100'000'000};
+  const unsigned int Max {100'000};
 
   for (unsigned int i{}; i != Max; ++i)
   {
@@ -698,7 +698,7 @@ TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
   ASSERT_EQ(static_cast<size_t>(0), fpNums.size());
   std::cout << "size: " << fpNums.size() << '\n';
   std::cout << "max size: " << fpNums.max_size() << '\n' << std::flush;
-  const unsigned int Max {100'000'000};
+  const unsigned int Max {100'000};
 
   for (unsigned int i{}; i != Max; ++i)
   {
@@ -722,6 +722,53 @@ TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
   std::cout << "-----------\n";
   std::cout << "size: " << fpNums.size() << '\n';
   std::cout << "max size: " << fpNums.max_size() << "\n\n\n";
+}
+
+TEST(fpEqual, fpEqual_test)
+{
+  long double x { (2.1901 * 0.000020009100009) / 3.134};
+  long double y { (0.000020009100009 / 3.134) * 2.1901};
+
+  const auto r1 = utilities::fpEqual(x, y);
+
+  ASSERT_EQ(r1, true);
+
+  x = 0.1;
+  y = 0.0;
+  const auto r2 = utilities::fpEqual(x, y, 0.001, true);
+
+  ASSERT_EQ(r2, false);
+
+  x = 0.000001;
+  y = 0.0;
+  const auto r3 = utilities::fpEqual(x, y, 0.00001, true);
+
+  ASSERT_EQ(r3, true);
+
+}
+
+TEST(replaceByte, replaceByte_test)
+{
+  auto v1 = utilities::replaceByte(0x12345678, 0, 0xAB);
+  ASSERT_EQ(v1, 0x123456AB);
+
+  auto v2 = 0x12345678;
+  v2 = utilities::replaceByte(v2, 1, 0xAB);
+  ASSERT_EQ(v2, 0x1234AB78);
+
+  //auto& v3 = 0x12345678;  // WRONG: does not compile
+
+  v2 = 0x12345678;
+  auto& v3 = v2;
+  auto cv3 = utilities::replaceByte(v3, 2, 0xAB);
+  ASSERT_EQ(cv3, 0x12AB5678);
+
+  auto&& v4 = 0x12345678;
+  v4 = utilities::replaceByte(v4, 3, 0xAB);
+  ASSERT_EQ(v4, 0xAB345678);
+
+  ASSERT_ANY_THROW(utilities::replaceByte(0x12345678, 4, 0xCD));
+  ASSERT_ANY_THROW(utilities::replaceByte(0x12345678, 500, 0xCD));
 }
 
 struct Hi  // has a "sayHi" member

@@ -81,7 +81,13 @@ template <class Container>
 void
 strTokenize(const std::string& str,
             Container& container,
-            const std::string& delims = " ") noexcept
+            const std::string& delims = " ") noexcept;
+
+template <class Container>
+void
+strTokenize(const std::string& str,
+            Container& container,
+            const std::string& delims) noexcept
 {
   if ( str.empty() )
   {
@@ -107,7 +113,12 @@ strTokenize(const std::string& str,
 template <class Container>
 Container
 strTokenize(const std::string& str,
-            const std::string& delims = " ") noexcept
+            const std::string& delims = " ") noexcept;
+
+template <class Container>
+Container
+strTokenize(const std::string& str,
+            const std::string& delims) noexcept
 {
   Container container {};
   
@@ -136,7 +147,12 @@ strTokenize(const std::string& str,
 template <class Container>
 Container
 strRegexTokenize(const std::string& str,
-                 const std::string& regExStr = R"(\s*[,;]\s*)") noexcept
+                 const std::string& regExStr = R"(\s*[,;]\s*)") noexcept;
+
+template <class Container>
+Container
+strRegexTokenize(const std::string& str,
+                 const std::string& regExStr) noexcept
 {
   Container container {};
   

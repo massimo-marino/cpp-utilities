@@ -42,6 +42,11 @@ namespace utilities
 template <typename T = double>
 const
 T
+getRandomFP(T min, T max) noexcept;
+
+template <typename T>
+const
+T
 getRandomFP(T min, T max) noexcept
 {
   static_assert(std::is_floating_point<T>::value != 0, "a floating point type required.");
@@ -59,6 +64,11 @@ getRandomFP(T min, T max) noexcept
 }
 
 template <typename T = int>
+const
+T
+getRandomINT(const T min, const T max) noexcept;
+
+template <typename T>
 const
 T
 getRandomINT(const T min, const T max) noexcept

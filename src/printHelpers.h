@@ -7,7 +7,9 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
+#include <bitset>
 #include <map>
 #include <vector>
 #include <valarray>
@@ -16,6 +18,78 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
 {
+template <typename T>
+void
+showBytes (T&& v) noexcept;
+
+template <typename T>
+void
+showBytes (T&& v) noexcept
+{
+  const unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
+  const auto W {sizeof(v)};
+  unsigned char item {};
+
+  for (int i = 0; i < W; ++i)
+  {
+    item = p[i];
+    std::cerr << static_cast<const void*>(&(p[i]))
+              << "["
+              << std::dec
+              << i
+              << "]: "
+              << std::setw(3)
+              << std::setfill(' ')
+              << static_cast<unsigned short>(item)
+              << " [0x"
+              << std::hex
+              << std::setw(2)
+              << std::setfill('0')
+              << static_cast<unsigned short>(item)
+              << "]\n";
+  }
+  std::cerr << std::endl;
+}
+
+// see: https://en.cppreference.com/w/cpp/utility/bitset
+template <typename T>
+void
+showBits (T&& v) noexcept;
+
+template <typename T>
+void
+showBits (T&& v) noexcept
+{
+  const unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
+  const auto W {sizeof(v)};
+  const auto CHAR_SIZE {8};
+  unsigned char item {};
+
+  for (int i = 0; i < W; ++i)
+  {
+    item = p[i];
+    std::cerr << static_cast<const void *>(&(p[i]))
+              << "["
+              << std::dec
+              << i
+              << "]: "
+              << std::setw(CHAR_SIZE)
+              << std::setfill('0')
+              << std::bitset<CHAR_SIZE>(item)
+              << " [0x"
+              << std::hex
+              << std::setw(2)
+              << std::setfill('0')
+              << static_cast<unsigned short>(item)
+              << "]\n";
+  }
+  std::cerr << std::endl;
+}
+
+template <typename T>
+void
+printVectorElements (const std::vector<T>& v) noexcept;
+
 template <typename T>
 void
 printVectorElements (const std::vector<T>& v) noexcept
@@ -34,6 +108,10 @@ printVectorElements (const std::vector<T>& v) noexcept
   std::for_each(v.cbegin(), v.cend(), printItem);
   std::cout << "]" << std::endl;
 }
+
+template <typename T>
+void
+printDequeElements (const std::deque<T>& v) noexcept;
 
 template <typename T>
 void
@@ -56,6 +134,10 @@ printDequeElements (const std::deque<T>& v) noexcept
 
 template <typename T>
 void
+printValarrayElements (const std::valarray<T>& va) noexcept;
+
+template <typename T>
+void
 printValarrayElements (const std::valarray<T>& va) noexcept
 {
   if ( 0 == va.size() )
@@ -75,6 +157,10 @@ printValarrayElements (const std::valarray<T>& va) noexcept
 
 template <typename C>
 void
+printContainerElements (const C& c) noexcept;
+
+template <typename C>
+void
 printContainerElements (const C& c) noexcept
 {
   if ( true == c.empty() )
@@ -91,6 +177,10 @@ printContainerElements (const C& c) noexcept
   std::for_each(c.cbegin(), c.cend(), printItem);
   std::cout << "]" << std::endl;
 }
+
+template <typename T, typename U>
+void
+printMapElements (const std::map<T,U>& m) noexcept;
 
 template <typename T, typename U>
 void
@@ -115,6 +205,12 @@ template<class Ch, class Tr, class Tuple, std::size_t... Is>
 void
 printTuple(std::basic_ostream<Ch,Tr>& os,
            const Tuple& t,
+           std::index_sequence<Is...>);
+
+template<class Ch, class Tr, class Tuple, std::size_t... Is>
+void
+printTuple(std::basic_ostream<Ch,Tr>& os,
+           const Tuple& t,
            std::index_sequence<Is...>)
 {
   ((os << (Is == 0? "" : ", ") << std::get<Is>(t)), ...);
@@ -124,12 +220,20 @@ printTuple(std::basic_ostream<Ch,Tr>& os,
 // overload << stream operator for std::pair's
 template <typename T, typename U>
 std::ostream&
+operator<<(std::ostream &os, const std::pair<T,U>& p);
+
+template <typename T, typename U>
+std::ostream&
 operator<<(std::ostream &os, const std::pair<T,U>& p)
 {
   return os << "[" << p.first << ", " << p.second <<  "]";
 }
 
 // overload << stream operator for std::valarray's
+template <typename T>
+std::ostream&
+operator<<(std::ostream &os, const std::valarray<T>& va);
+
 template <typename T>
 std::ostream&
 operator<<(std::ostream &os, const std::valarray<T>& va)
@@ -153,6 +257,10 @@ operator<<(std::ostream &os, const std::valarray<T>& va)
 // overload << stream operator for std::vector's
 template <typename T>
 std::ostream&
+operator<<(std::ostream &os, const std::vector<T>& v);
+
+template <typename T>
+std::ostream&
 operator<<(std::ostream &os, const std::vector<T>& v)
 {
   if ( 0 == v.size() )
@@ -172,6 +280,10 @@ operator<<(std::ostream &os, const std::vector<T>& v)
 }
 
 // overload << stream operator for std::vector's
+template <typename T>
+std::ostream&
+operator<<(std::ostream &os, const std::deque<T>& v);
+
 template <typename T>
 std::ostream&
 operator<<(std::ostream &os, const std::deque<T>& v)
@@ -194,6 +306,10 @@ operator<<(std::ostream &os, const std::deque<T>& v)
 
 template<class Ch, class Tr, class... Args>
 decltype(auto)
+operator<<(std::basic_ostream<Ch, Tr>& os, const std::tuple<Args...>& t);
+
+template<class Ch, class Tr, class... Args>
+decltype(auto)
 operator<<(std::basic_ostream<Ch, Tr>& os, const std::tuple<Args...>& t)
 {
   os << "[";
@@ -203,6 +319,10 @@ operator<<(std::basic_ostream<Ch, Tr>& os, const std::tuple<Args...>& t)
 
 namespace utilities
 {
+template <typename T, typename ... Ts>
+void
+printArgs(std::ostream& os, const T& v, const Ts& ...vs);
+
 template <typename T, typename ... Ts>
 void
 printArgs(std::ostream& os, const T& v, const Ts& ...vs)
