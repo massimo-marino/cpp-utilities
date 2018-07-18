@@ -20,11 +20,11 @@ namespace utilities
 {
 template <typename T>
 void
-showBytes (T&& v) noexcept;
+showBytes (T&& v, std::ostream &os = std::cerr) noexcept;
 
 template <typename T>
 void
-showBytes (T&& v) noexcept
+showBytes (T&& v, std::ostream &os) noexcept
 {
   const unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
   const auto W {sizeof(v)};
@@ -33,32 +33,32 @@ showBytes (T&& v) noexcept
   for (int i = 0; i < W; ++i)
   {
     item = p[i];
-    std::cerr << static_cast<const void*>(&(p[i]))
-              << "["
-              << std::dec
-              << i
-              << "]: "
-              << std::setw(3)
-              << std::setfill(' ')
-              << static_cast<unsigned short>(item)
-              << " [0x"
-              << std::hex
-              << std::setw(2)
-              << std::setfill('0')
-              << static_cast<unsigned short>(item)
-              << "]\n";
+    os << static_cast<const void*>(&(p[i]))
+       << "["
+       << std::dec
+       << i
+       << "]: "
+       << std::setw(3)
+       << std::setfill(' ')
+       << static_cast<unsigned short>(item)
+       << " [0x"
+       << std::hex
+       << std::setw(2)
+       << std::setfill('0')
+       << static_cast<unsigned short>(item)
+       << "]\n";
   }
-  std::cerr << std::endl;
+  os << std::endl;
 }
 
 // see: https://en.cppreference.com/w/cpp/utility/bitset
 template <typename T>
 void
-showBits (T&& v) noexcept;
+showBits (T&& v, std::ostream &os = std::cerr) noexcept;
 
 template <typename T>
 void
-showBits (T&& v) noexcept
+showBits (T&& v, std::ostream &os) noexcept
 {
   const unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
   const auto W {sizeof(v)};
@@ -68,22 +68,22 @@ showBits (T&& v) noexcept
   for (int i = 0; i < W; ++i)
   {
     item = p[i];
-    std::cerr << static_cast<const void *>(&(p[i]))
-              << "["
-              << std::dec
-              << i
-              << "]: "
-              << std::setw(CHAR_SIZE)
-              << std::setfill('0')
-              << std::bitset<CHAR_SIZE>(item)
-              << " [0x"
-              << std::hex
-              << std::setw(2)
-              << std::setfill('0')
-              << static_cast<unsigned short>(item)
-              << "]\n";
+    os << static_cast<const void *>(&(p[i]))
+       << "["
+       << std::dec
+       << i
+       << "]: "
+       << std::setw(CHAR_SIZE)
+       << std::setfill('0')
+       << std::bitset<CHAR_SIZE>(item)
+       << " [0x"
+       << std::hex
+       << std::setw(2)
+       << std::setfill('0')
+       << static_cast<unsigned short>(item)
+       << "]\n";
   }
-  std::cerr << std::endl;
+  os << std::endl;
 }
 
 template <typename T>
