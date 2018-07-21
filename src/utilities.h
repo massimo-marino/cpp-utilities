@@ -59,10 +59,10 @@ getDemangledTypeName() noexcept
 // FP1, FP2 := float, double, long double
 template <typename FP1, typename FP2>
 auto
-fpEqual(const FP1 arg1,
-        const FP2 arg2,
-        const long double E = static_cast<long double>(1.e-20),
-        const bool verbose = false) noexcept -> bool;
+fpEqual(FP1 arg1,
+        FP2 arg2,
+        long double E = static_cast<long double>(1.e-20),
+        bool verbose = false) noexcept -> bool;
 
 // see: https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
 // this code implements an easy and dirty solution
@@ -102,10 +102,39 @@ fpEqual(const FP1 arg1,
   return fabsl(static_cast<long double>(arg1) - static_cast<long double>(arg2)) < E;
 }
 
+template <typename T>
+T
+replaceByte(T&& x,
+            size_t i,
+            unsigned char b) noexcept(false);
+
+template <typename T>
+T
+replaceByte(T&& x,
+            const size_t i,
+            const unsigned char b) noexcept(false)
+{
+  const int W = sizeof(T);
+  // 0 <= i <= W-1
+  if ( i >= W )
+  {
+    std::cerr << "replaceByte: ERROR: arg i: "
+              << i
+              << " but must be >= 0 and <= "
+              << W - 1
+              << std::endl;
+    throw 1;
+  }
+
+  //unsigned char* p = reinterpret_cast<unsigned char*>(&x);
+  //p[i] = b;
+  reinterpret_cast<unsigned char*>(&x)[i] = b;
+
+  return x;
+}
+
 bool isLittleEndian () noexcept;
 bool isBigEndian () noexcept;
-
-unsigned int replaceByte (unsigned int&& x, const int i, const unsigned char b) noexcept(false);
 
 ////////////////////////////////////////////////////////////////////////////////
 // check if all the parameters are within a certain range

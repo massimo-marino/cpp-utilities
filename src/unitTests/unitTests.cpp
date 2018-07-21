@@ -18,6 +18,7 @@ using namespace std::string_literals;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wexit-time-destructors"
 #pragma clang diagnostic ignored "-Wglobal-constructors"
+#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST(helpersForConcurrentLogging, test_pclog)
@@ -225,7 +226,7 @@ TEST(insertSortedHelper, test_insertSorted)
   ASSERT_EQ(true, std::is_sorted(std::begin(v), std::end(v)));
   std::vector<int> expectedVector {-35, -25, -20, -15, -10, -4, -3, -3, -2, -1, 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 23, 45, 67};
   ASSERT_EQ(v.size(), expectedVector.size());
-  for (auto i {0}; i < v.size(); ++i)
+  for (size_t i {0}; i < v.size(); ++i)
   {
     ASSERT_EQ(v[i], expectedVector[i]);
   }
@@ -726,22 +727,22 @@ TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
 
 TEST(fpEqual, fpEqual_test)
 {
-  long double x { (2.1901 * 0.000020009100009) / 3.134};
-  long double y { (0.000020009100009 / 3.134) * 2.1901};
+  long double x { static_cast<long double>((2.1901 * 0.000020009100009) / 3.134)};
+  long double y { static_cast<long double>((0.000020009100009 / 3.134) * 2.1901)};
 
   const auto r1 = utilities::fpEqual(x, y);
 
   ASSERT_EQ(r1, true);
 
-  x = 0.1;
-  y = 0.0;
-  const auto r2 = utilities::fpEqual(x, y, 0.001, true);
+  x = static_cast<long double>(0.1);
+  y = static_cast<long double>(0.0);
+  const auto r2 = utilities::fpEqual(x, y, static_cast<long double>(0.001), true);
 
   ASSERT_EQ(r2, false);
 
-  x = 0.000001;
-  y = 0.0;
-  const auto r3 = utilities::fpEqual(x, y, 0.00001, true);
+  x = static_cast<long double>(0.000001);
+  y = static_cast<long double>(0.0);
+  const auto r3 = utilities::fpEqual(x, y, static_cast<long double>(0.00001), true);
 
   ASSERT_EQ(r3, true);
 
@@ -753,22 +754,23 @@ TEST(replaceByte, replaceByte_test)
   ASSERT_EQ(v1, 0x123456AB);
 
   auto v2 = 0x12345678;
-  v2 = utilities::replaceByte(v2, 1, 0xAB);
+  v2 = utilities::replaceByte(static_cast<unsigned int>(v2), 1, 0xAB);
   ASSERT_EQ(v2, 0x1234AB78);
 
   //auto& v3 = 0x12345678;  // WRONG: does not compile
 
   v2 = 0x12345678;
   auto& v3 = v2;
-  auto cv3 = utilities::replaceByte(v3, 2, 0xAB);
+  auto cv3 = utilities::replaceByte(static_cast<unsigned int>(v3), 2, 0xAB);
   ASSERT_EQ(cv3, 0x12AB5678);
 
   auto&& v4 = 0x12345678;
-  v4 = utilities::replaceByte(v4, 3, 0xAB);
+  v4 = utilities::replaceByte(static_cast<unsigned int>(v4), 3, 0xAB);
   ASSERT_EQ(v4, 0xAB345678);
 
   ASSERT_ANY_THROW(utilities::replaceByte(0x12345678, 4, 0xCD));
   ASSERT_ANY_THROW(utilities::replaceByte(0x12345678, 500, 0xCD));
+  ASSERT_ANY_THROW(utilities::replaceByte(0x12345678, -1, 0xFF));
 }
 
 struct Hi  // has a "sayHi" member
