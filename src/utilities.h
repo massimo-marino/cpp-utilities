@@ -114,7 +114,7 @@ replaceByte(T&& x,
             const size_t i,
             const unsigned char b) noexcept(false)
 {
-  const int W = sizeof(T);
+  auto W = sizeof(T);
   // 0 <= i <= W-1
   if ( i >= W )
   {
