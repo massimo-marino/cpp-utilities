@@ -172,7 +172,7 @@ MESSAGE( STATUS )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-SET( sources_list utilities.cpp cfile_helper.cpp concurrentLogging.cpp stringTokenizers.cpp printHelpers.cpp printHelpers.h tprintf.cpp containerHelpers.h hasMember.h is_string.h perfTimer.h randomNumberGenerators.h vectorHelpers.h)
+SET( sources_list utilities.cpp cfile_helper.cpp concurrentLogging.cpp stringTokenizers.cpp printHelpers.cpp printHelpers.h tprintf.cpp containerHelpers.h hasMember.h is_string.h perfTimer.h randomNumberGenerators.h vectorHelpers.h conversions.h )
 
 ADD_LIBRARY( utilities ${sources_list} )
 

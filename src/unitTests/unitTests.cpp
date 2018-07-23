@@ -807,6 +807,43 @@ TEST(hasMember, hasMember_test_1)
   ASSERT_EQ(has_member(decltype(a), sayBye), false);
   ASSERT_EQ(has_member(decltype(b), sayBye), true);
 }
+
+TEST(conversions, conversions_test)
+{
+  int i {123};
+  std::string s {utilities::numTypeToString(i)};
+  ASSERT_EQ(s, "123");
+  std::cerr << "[" << __FUNCTION__ << "] "
+            << "numTypeToString(" << i << ") = \"" << s << "\"" << std::endl;
+
+  s = "234.654";
+  float f {utilities::stringToNumType<float>(s)};
+  ASSERT_EQ(f, static_cast<float>(234.654));
+  std::cerr << "[" << __FUNCTION__ << "] "
+            << "stringToNumType<float>(\"" << s << "\") = " << f << std::endl;
+
+  double d {utilities::stringToNumType<double>(s)};
+  ASSERT_EQ(d, static_cast<double>(234.654));
+  std::cerr << "[" << __FUNCTION__ << "] "
+            << "stringToNumType<double>(\"" << s << "\") = " << d << std::endl;
+
+  short int si {utilities::stringToNumType<short int>(s)};
+  ASSERT_EQ(si, static_cast<short int>(234));
+  std::cerr << "[" << __FUNCTION__ << "] "
+            << "stringToNumType<short int>(\"" << s << "\") = " << si << std::endl;
+
+  si = utilities::stringToNumtype(s, si);
+  ASSERT_EQ(si, static_cast<short int>(234));
+  std::cerr << "[" << __FUNCTION__ << "] "
+            << "stringToNumtype(\"" << s << "\", " << si << ") = " << si << std::endl;
+
+  i = utilities::stringToNumType<int>(s);
+  ASSERT_EQ(i, 234);
+  std::cerr << "[" << __FUNCTION__ << "] "
+            << "stringToNumType<int>(\"" << s << "\") = " << i << std::endl;
+
+  //std::string t = numTypeToString(s); // does not compile
+}
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here
