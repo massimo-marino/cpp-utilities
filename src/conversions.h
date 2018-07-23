@@ -26,11 +26,11 @@ numTypeToString(const numType &n) noexcept
 
 template <typename numType>
 numType
-stringToNumType(const std::string &text);
+stringToNumType(const std::string &text) noexcept;
 
 template <typename numType>
 numType
-stringToNumType(const std::string &text)
+stringToNumType(const std::string &text) noexcept
 {
   static_assert(std::is_arithmetic<numType>::value,
                 "ERROR: stringToNumType<numType>() needs an arithmetic type as template argument");
@@ -44,11 +44,11 @@ stringToNumType(const std::string &text)
 
 template <typename numType>
 numType
-stringToNumtype(const std::string &text, numType &n);
+stringToNumtype(const std::string &text, numType &n) noexcept;
 
 template <typename numType>
 numType
-stringToNumtype(const std::string &text, numType &n)
+stringToNumtype(const std::string &text, numType &n) noexcept
 {
   static_assert(std::is_arithmetic<numType>::value,
                 "ERROR: stringToNumtype<numType>() needs an arithmetic type as template argument");
