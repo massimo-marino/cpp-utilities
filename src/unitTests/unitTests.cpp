@@ -813,34 +813,38 @@ TEST(conversions, conversions_test)
   int i {123};
   std::string s {utilities::numTypeToString(i)};
   ASSERT_EQ(s, "123");
-  std::cerr << "[" << __FUNCTION__ << "] "
-            << "numTypeToString(" << i << ") = \"" << s << "\"" << std::endl;
+  std::cerr << "numTypeToString(" << i << ") = \"" << s << "\"" << std::endl;
+
+  long l {123456};
+  s = utilities::numTypeToString(l);
+  ASSERT_EQ(s, "123456");
+  std::cerr << "numTypeToString(" << l << ") = \"" << s << "\"" << std::endl;
+
+  long long ll {1234567890};
+  s = utilities::numTypeToString(ll);
+  ASSERT_EQ(s, "1234567890");
+  std::cerr << "numTypeToString(" << ll << ") = \"" << s << "\"" << std::endl;
 
   s = "234.654";
   float f {utilities::stringToNumType<float>(s)};
   ASSERT_EQ(f, static_cast<float>(234.654));
-  std::cerr << "[" << __FUNCTION__ << "] "
-            << "stringToNumType<float>(\"" << s << "\") = " << f << std::endl;
+  std::cerr << "stringToNumType<float>(\"" << s << "\") = " << f << std::endl;
 
   double d {utilities::stringToNumType<double>(s)};
   ASSERT_EQ(d, static_cast<double>(234.654));
-  std::cerr << "[" << __FUNCTION__ << "] "
-            << "stringToNumType<double>(\"" << s << "\") = " << d << std::endl;
+  std::cerr << "stringToNumType<double>(\"" << s << "\") = " << d << std::endl;
 
   short int si {utilities::stringToNumType<short int>(s)};
   ASSERT_EQ(si, static_cast<short int>(234));
-  std::cerr << "[" << __FUNCTION__ << "] "
-            << "stringToNumType<short int>(\"" << s << "\") = " << si << std::endl;
+  std::cerr << "stringToNumType<short int>(\"" << s << "\") = " << si << std::endl;
 
   si = utilities::stringToNumtype(s, si);
   ASSERT_EQ(si, static_cast<short int>(234));
-  std::cerr << "[" << __FUNCTION__ << "] "
-            << "stringToNumtype(\"" << s << "\", " << si << ") = " << si << std::endl;
+  std::cerr << "stringToNumtype(\"" << s << "\", " << si << ") = " << si << std::endl;
 
   i = utilities::stringToNumType<int>(s);
   ASSERT_EQ(i, 234);
-  std::cerr << "[" << __FUNCTION__ << "] "
-            << "stringToNumType<int>(\"" << s << "\") = " << i << std::endl;
+  std::cerr << "stringToNumType<int>(\"" << s << "\") = " << i << std::endl;
 
   //std::string t = numTypeToString(s); // does not compile
 }

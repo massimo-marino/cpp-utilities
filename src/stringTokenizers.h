@@ -7,6 +7,7 @@
 #pragma once
 
 #include <string>
+#include <climits>
 #include <regex>
 #include <algorithm>
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,7 @@ class stringTokenizer final
   std::string delim_ {" \f\n\r\t\v\""};
   const std::string str_;
   mutable std::string sRest_Of_;
-  mutable long count_;
+  mutable unsigned long count_;
   mutable std::string::size_type begin_;
   mutable std::string::size_type end_;
 
@@ -27,6 +28,9 @@ class stringTokenizer final
   // we don't want these objects allocated on the heap
   void* operator new(std::size_t) = delete;
   void* operator new[](std::size_t) = delete;
+  void operator delete(void*) = delete;
+  void operator delete[](void*) = delete;
+
   stringTokenizer() = delete;
   stringTokenizer(const stringTokenizer& rhs) = delete;
   stringTokenizer& operator=(const stringTokenizer& rhs) = delete;
@@ -35,8 +39,6 @@ class stringTokenizer final
 
   explicit
   stringTokenizer(const std::string& s, const std::string& delim) noexcept;
-
-  ~stringTokenizer() = default;
 
   size_t countTokens() const noexcept;
 
@@ -98,9 +100,8 @@ strTokenize(const std::string& str,
     container.push_back(str);
     return;
   }
-  std::size_t current;
-  std::size_t previous = 0;
-  current = str.find_first_of(delims);
+  std::size_t previous {0};
+  std::size_t current {str.find_first_of(delims)};
   while ( std::string::npos != current )
   {
     container.push_back(str.substr(previous, current - previous));
@@ -131,9 +132,8 @@ strTokenize(const std::string& str,
     container.push_back(str);
     return container;
   }
-  std::size_t current;
-  std::size_t previous = 0;
-  current = str.find_first_of(delims);
+  std::size_t previous {0};
+  std::size_t current {str.find_first_of(delims)};
   while ( std::string::npos != current )
   {
     container.push_back(str.substr(previous, current - previous));

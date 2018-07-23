@@ -11,7 +11,7 @@ namespace utilities
 stringTokenizer::stringTokenizer(const std::string& s, const std::string& delim) noexcept
 :
 str_(s),
-count_(-1),
+count_(ULONG_MAX),
 begin_(0),
 end_(0)
 {
@@ -28,14 +28,14 @@ end_(0)
 size_t
 stringTokenizer::countTokens() const noexcept
 {
-  if ( count_ >= 0 )
+  if ( count_ != ULONG_MAX )
   {
     // return if we've already counted
     return (static_cast<size_t>(count_));
   }
 
-  std::string::size_type n = 0;
-  std::string::size_type i = 0;
+  std::string::size_type n {0};
+  std::string::size_type i {0};
 
   for (;;)
   {
@@ -52,7 +52,7 @@ stringTokenizer::countTokens() const noexcept
       break;
     }
   }
-  count_ = static_cast<long>(n);
+  count_ = n;
   return static_cast<size_t>(count_);
 }
 
@@ -78,7 +78,7 @@ stringTokenizer::nextToken(std::string& s) noexcept
 std::string
 stringTokenizer::srest_of() const noexcept(false)
 {
-  std::string::size_type iTemp;
+  std::string::size_type iTemp {};
 
   try
   {
