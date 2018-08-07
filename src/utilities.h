@@ -41,20 +41,59 @@ void yieldCPUAndSleep (const int64_t& nanoseconds = 0) noexcept;
 void removeMultipleOccurrences(std::string& s) noexcept;
 
 template <typename T>
+constexpr
+bool
+IsNullPtr(const T* ptr) noexcept;
+
+template <typename T>
+constexpr
+bool
+IsNullPtr(const T* ptr) noexcept
+{
+  return nullptr == ptr;
+}
+
+template <typename T>
+constexpr
+bool
+IsNullPtr(const std::unique_ptr<T>& ptr);
+
+template <typename T>
+constexpr
+bool
+IsNullPtr(const std::unique_ptr<T>& ptr)
+{
+  return nullptr == ptr.get();
+}
+
+template <typename T>
+constexpr
+bool
+IsNullPtr(const std::shared_ptr<T>& ptr);
+
+template <typename T>
+constexpr
+bool
+IsNullPtr(const std::shared_ptr<T>& ptr)
+{
+  return nullptr == ptr.get();
+}
+
+template<typename T>
 std::string
 getDemangledTypeName() noexcept;
 
-template <typename T>
+template<typename T>
 std::string
 getDemangledTypeName() noexcept
 {
-  int   status{};
-  char* demangledName {abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status)};
+  int status {};
+  char *demangledName {abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status)};
   std::string demangledNameString {static_cast<std::string>(demangledName)};
 
   free(demangledName);
+
   return demangledNameString;
-  //return static_cast<std::string>(typeid(T).name());
 }
 
 // FP1, FP2 := float, double, long double
@@ -62,7 +101,7 @@ template <typename FP1, typename FP2>
 auto
 fpEqual(FP1 arg1,
         FP2 arg2,
-        long double E = static_cast<long double>(1.e-20),
+        double E = static_cast<double>(1.e-20),
         bool verbose = false) noexcept -> bool;
 
 // see: https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
@@ -71,7 +110,7 @@ template<typename FP1, typename FP2>
 auto
 fpEqual(const FP1 arg1,
         const FP2 arg2,
-        const long double E,
+        const double E,
         const bool verbose) noexcept -> bool
 {
   // compile-time type check
@@ -95,12 +134,12 @@ fpEqual(const FP1 arg1,
               << "\narg2: "
               << arg2
               << "\nfabsl(arg1 - arg2): "
-              << fabsl(static_cast<long double>(arg1) - static_cast<long double>(arg2))
+              << fabs(static_cast<double>(arg1) - static_cast<double>(arg2))
               << "\n";
   }
 
-  // use fabsl() NOT abs()
-  return fabsl(static_cast<long double>(arg1) - static_cast<long double>(arg2)) < E;
+  // use fabs() NOT abs()
+  return fabs(static_cast<double>(arg1) - static_cast<double>(arg2)) < E;
 }
 
 // see: https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon

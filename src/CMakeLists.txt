@@ -5,10 +5,11 @@ PROJECT( cppUtilities-lib )
 ################################################################################
 #### settings for clang 5.0
 SET (CMAKE_CXX_COMPILER "/clang_5.0.0/bin/clang++-5.0")
+SET (CMAKE_INCLUDE_PATH "-I. -I/clang_5.0.0/include/c++/v1" )
 #SET (CMAKE_CXX_STANDARD 17)
 SET (CLANG_CXX_FLAGS "-std=c++17 -O2 -ffast-math -pthread -pedantic -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -fno-assume-sane-operator-new")
 ####SET (CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -fsanitize=undefined")
-SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -mtune=native -march=native -m64 -lm -lpthread -lc++experimental")
+SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -mtune=native -march=native -m64 -lm -lpthread") # -lc++experimental")
 ### use libstdc++
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 ### use libc++

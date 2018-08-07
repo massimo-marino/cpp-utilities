@@ -20,7 +20,6 @@ class cfile_helper final
   enum class fstream_direction : int { fs_NOT_DEFINED, fs_INPUT, fs_OUTPUT };
 
   cfile_helper () = delete;
-  explicit cfile_helper (const cfile_helper& orig) noexcept;
   explicit cfile_helper (const std::string&       file_name = "",
                          const fstream_direction& fs_direction = fstream_direction::fs_NOT_DEFINED) noexcept(false);
   ~cfile_helper ();

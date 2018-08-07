@@ -14,6 +14,7 @@
 #include <vector>
 #include <valarray>
 #include <deque>
+#include <iterator>
 #include <algorithm>
 ////////////////////////////////////////////////////////////////////////////////
 namespace utilities
@@ -30,7 +31,7 @@ showBytes (T&& v, std::ostream &os) noexcept
   const auto W {sizeof(v)};
   unsigned char item {};
 
-  for (int i = 0; i < W; ++i)
+  for (int i {0}; i < W; ++i)
   {
     item = p[i];
     os << static_cast<const void*>(&(p[i]))
@@ -65,7 +66,7 @@ showBits (T&& v, std::ostream &os) noexcept
   const auto CHAR_SIZE {8};
   unsigned char item {};
 
-  for (int i = 0; i < W; ++i)
+  for (int i {0}; i < W; ++i)
   {
     item = p[i];
     os << static_cast<const void *>(&(p[i]))
@@ -151,7 +152,7 @@ printValarrayElements (const std::valarray<T>& va) noexcept
   };
 
   std::cout << "[ ";
-  std::for_each(std::cbegin(va), std::cend(va), printItem);
+  std::for_each(std::begin(va), std::end(va), printItem);
   std::cout << "]" << std::endl;
 }
 
@@ -249,7 +250,7 @@ operator<<(std::ostream &os, const std::valarray<T>& va)
   };
 
   os << "[ ";
-  std::for_each(std::cbegin(va), std::cend(va), printItem);
+  std::for_each(std::begin(va), std::end(va), printItem);
   os << "]";
   return os;
 }

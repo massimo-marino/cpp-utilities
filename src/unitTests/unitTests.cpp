@@ -4,8 +4,8 @@
  *
  * Created on October 04, 2017, 10:43 AM
  */
-
 #include "../utilities.h"
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <experimental/string_view>
@@ -727,22 +727,22 @@ TEST(randomNumberGenerators, floatingPointRandomNumberGeneration_test)
 
 TEST(fpEqual, fpEqual_test)
 {
-  long double x { static_cast<long double>((2.1901 * 0.000020009100009) / 3.134)};
-  long double y { static_cast<long double>((0.000020009100009 / 3.134) * 2.1901)};
+  double x { static_cast<double>((2.1901 * 0.000020009100009) / 3.134)};
+  double y { static_cast<double>((0.000020009100009 / 3.134) * 2.1901)};
 
   const auto r1 = utilities::fpEqual(x, y);
 
   ASSERT_EQ(r1, true);
 
-  x = static_cast<long double>(0.1);
-  y = static_cast<long double>(0.0);
-  const auto r2 = utilities::fpEqual(x, y, static_cast<long double>(0.001), true);
+  x = static_cast<double>(0.1);
+  y = static_cast<double>(0.0);
+  const auto r2 = utilities::fpEqual(x, y, static_cast<double>(0.001), true);
 
   ASSERT_EQ(r2, false);
 
-  x = static_cast<long double>(0.000001);
-  y = static_cast<long double>(0.0);
-  const auto r3 = utilities::fpEqual(x, y, static_cast<long double>(0.00001), true);
+  x = static_cast<double>(0.000001);
+  y = static_cast<double>(0.0);
+  const auto r3 = utilities::fpEqual(x, y, static_cast<double>(0.00001), true);
 
   ASSERT_EQ(r3, true);
 
@@ -813,40 +813,92 @@ TEST(conversions, conversions_test)
   int i {123};
   std::string s {utilities::numTypeToString(i)};
   ASSERT_EQ(s, "123");
-  std::cerr << "numTypeToString(" << i << ") = \"" << s << "\"" << std::endl;
+  std::cout << "numTypeToString(" << i << ") = \"" << s << "\"" << std::endl;
 
   long l {123456};
   s = utilities::numTypeToString(l);
   ASSERT_EQ(s, "123456");
-  std::cerr << "numTypeToString(" << l << ") = \"" << s << "\"" << std::endl;
+  std::cout << "numTypeToString(" << l << ") = \"" << s << "\"" << std::endl;
 
   long long ll {1234567890};
   s = utilities::numTypeToString(ll);
   ASSERT_EQ(s, "1234567890");
-  std::cerr << "numTypeToString(" << ll << ") = \"" << s << "\"" << std::endl;
+  std::cout << "numTypeToString(" << ll << ") = \"" << s << "\"" << std::endl;
 
   s = "234.654";
   float f {utilities::stringToNumType<float>(s)};
   ASSERT_EQ(f, static_cast<float>(234.654));
-  std::cerr << "stringToNumType<float>(\"" << s << "\") = " << f << std::endl;
+  std::cout << "stringToNumType<float>(\"" << s << "\") = " << f << std::endl;
 
   double d {utilities::stringToNumType<double>(s)};
   ASSERT_EQ(d, static_cast<double>(234.654));
-  std::cerr << "stringToNumType<double>(\"" << s << "\") = " << d << std::endl;
+  std::cout << "stringToNumType<double>(\"" << s << "\") = " << d << std::endl;
 
   short int si {utilities::stringToNumType<short int>(s)};
   ASSERT_EQ(si, static_cast<short int>(234));
-  std::cerr << "stringToNumType<short int>(\"" << s << "\") = " << si << std::endl;
+  std::cout << "stringToNumType<short int>(\"" << s << "\") = " << si << std::endl;
 
   si = utilities::stringToNumtype(s, si);
   ASSERT_EQ(si, static_cast<short int>(234));
-  std::cerr << "stringToNumtype(\"" << s << "\", " << si << ") = " << si << std::endl;
+  std::cout << "stringToNumtype(\"" << s << "\", " << si << ") = " << si << std::endl;
 
   i = utilities::stringToNumType<int>(s);
   ASSERT_EQ(i, 234);
-  std::cerr << "stringToNumType<int>(\"" << s << "\") = " << i << std::endl;
+  std::cout << "stringToNumType<int>(\"" << s << "\") = " << i << std::endl;
 
   //std::string t = numTypeToString(s); // does not compile
+}
+
+TEST(IsNullPtr, IsNullPtr_test)
+{
+  int *p1; // not initialized on purpose (this should trigger a compiler warning)
+  int *p2 {};
+  auto uptr_to_int {std::make_unique<int>()};
+  auto sptr_to_float {std::make_shared<float>()};
+
+  *uptr_to_int   = 123;
+  *sptr_to_float = static_cast<float>(2345.098765);
+
+  ASSERT_NE(nullptr, p1);
+  ASSERT_EQ(false, utilities::IsNullPtr(p1));
+
+  ASSERT_EQ(nullptr, p2);
+  ASSERT_EQ(true, utilities::IsNullPtr(p2));
+
+  ASSERT_NE(nullptr, uptr_to_int.get());
+  ASSERT_EQ(false, utilities::IsNullPtr(uptr_to_int.get()));
+
+  ASSERT_NE(nullptr, sptr_to_float.get());
+  ASSERT_EQ(false, utilities::IsNullPtr(sptr_to_float.get()));
+
+//  std::cout << std::boolalpha
+//            << "p1 is nullptr: "
+//            << utilities::IsNullPtr(p1)
+//            << " - expected: "
+//            << (nullptr == p1)
+//            << "\n";
+//  std::cout << std::boolalpha
+//            << "p2 is nullptr: "
+//            << utilities::IsNullPtr(p2)
+//            << "  - expected: "
+//            << (nullptr == p2)
+//            << "\n";
+//  std::cout << std::boolalpha
+//            << "uptr_to_int is nullptr: "
+//            << utilities::IsNullPtr(uptr_to_int.get())
+//            << "  - expected: "
+//            << (nullptr == uptr_to_int.get())
+//            << " - value: "
+//            << *uptr_to_int
+//            << "\n";
+//  std::cout << std::boolalpha
+//            << "sptr_to_float is nullptr: "
+//            << utilities::IsNullPtr(uptr_to_int.get())
+//            << "  - expected: "
+//            << (nullptr == sptr_to_float.get())
+//            << " - value: "
+//            << *sptr_to_float
+//            << "\n";
 }
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop

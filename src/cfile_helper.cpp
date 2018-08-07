@@ -163,28 +163,28 @@ cfile_helper::set_file_is_closed () const noexcept
 bool
 cfile_helper::is_file_open () const noexcept
 {
-  return (true == m_file_is_open);
+  return m_file_is_open;
 }
 
 inline constexpr
 bool
 cfile_helper::is_file_closed () const noexcept
 {
-  return (false == m_file_is_open);
+  return !m_file_is_open;
 }
 
 inline constexpr
 bool
 cfile_helper::is_eof_reached () const noexcept
 {
-  return ( true == get_fstream().eof());
+  return get_fstream().eof();
 }
 
 inline constexpr
 bool
 cfile_helper::is_eof_not_reached () const noexcept
 {
-  return (false == get_fstream().eof());
+  return !get_fstream().eof();
 }
 
 std::streamoff
@@ -241,7 +241,7 @@ int
 cfile_helper::load_file_in_string (std::string&          string,
                                    const std::streampos& pos) const noexcept(false)
 {
-  if ( false == is_file_open() )
+  if (!is_file_open())
   {
     return(-1);  
   }
@@ -266,7 +266,7 @@ cfile_helper::load_file_in_string (std::string&          string,
     return (-4);
   }
 
-  if ( (static_cast<signed long>(uiFile_Size) - static_cast<signed long>(pos)) <= 0 )
+  if ( uiFile_Size < static_cast<unsigned long>(pos) )
   {
     return (-2);  
   }
