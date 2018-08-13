@@ -5,12 +5,12 @@ PROJECT( cppUtilities-unit-tests )
 ################################################################################
 #### settings for clang 5.0
 SET (CMAKE_CXX_COMPILER "/clang_5.0.0/bin/clang++-5.0")
-SET (CMAKE_INCLUDE_PATH "-I. -I/clang_5.0.0/include/c++/v1" )
 #SET (CMAKE_CXX_STANDARD 17)
-SET (CLANG_CXX_FLAGS "-std=c++17 -O2 -ffast-math -pthread -pedantic -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -fno-assume-sane-operator-new")
+SET (CLANG_CXX_FLAGS "-I. -I.. -std=c++17 -O2 -ffast-math -pthread -pedantic -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -fno-assume-sane-operator-new")
 ####SET (CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -fsanitize=undefined")
-SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -mtune=native -march=native -m64 -lm -lpthread -lrt -ldl -lgtest_dll -lgtest_main") # -lc++experimental")
-### use libstdc++
+SET (GOOGLETEST_LIBS "-lgtest_dll -lgtest_main")
+SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -mtune=native -march=native -m64 -lm -lrt ${GOOGLETEST_LIBS}")
+### Googletest code must use libstdc++
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 ### use libc++
 #SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
@@ -173,8 +173,6 @@ MESSAGE( STATUS )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-SET( sources_list unitTests.cpp )
+SET( sources_list unitTests.cpp ../utilities.cpp ../cfile_helper.cpp ../concurrentLogging.cpp ../stringTokenizers.cpp ../printHelpers.cpp ../printHelpers.h ../tprintf.cpp ../containerHelpers.h ../hasMember.h ../is_string.h ../perfTimer.h ../randomNumberGenerators.h ../vectorHelpers.h ../conversions.h )
 
 ADD_EXECUTABLE( unitTests ${sources_list} )
-
-TARGET_LINK_LIBRARIES (unitTests LINK_PUBLIC utilities)
