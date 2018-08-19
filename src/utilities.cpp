@@ -29,19 +29,19 @@ removeMultipleOccurrences(std::string& s) noexcept
 bool
 isLittleEndian() noexcept
 {
-  constexpr auto v {0x01234567};
-  const unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
+  constexpr static auto v {0x0001};
+  const static unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
 
-  return p[0] == static_cast<unsigned char>(0x67);
+  return p[0] == static_cast<unsigned char>(0x01);
 }
 
 bool
 isBigEndian() noexcept
 {
-  constexpr auto v {0x01234567};
-  const unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
+  constexpr static auto v {0x0001};
+  const static unsigned char* p {reinterpret_cast<const unsigned char*>(&v)};
 
-  return p[0] == static_cast<unsigned char>(0x01);
+  return p[0] == static_cast<unsigned char>(0x00);
 }
 
 }  // namespace utilities

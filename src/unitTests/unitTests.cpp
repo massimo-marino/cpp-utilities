@@ -900,6 +900,41 @@ TEST(IsNullPtr, IsNullPtr_test)
 //            << *sptr_to_float
 //            << "\n";
 }
+
+TEST(perfTimer_Seconds, test_perfTimerSeconds_1)
+{
+  const size_t N {400'000'000};
+
+  std::vector<size_t> v1 {};
+  std::vector<size_t> v2 {};
+
+  //v1.reserve(N);
+  //v2.reserve(N);
+
+  auto push_back_func = [&v1] () {
+    for (size_t i {0}; i < N; ++i) {
+      v1.push_back(i);
+    }
+  };
+  auto emplace_back_func = [&v2] () {
+    for (size_t i {0}; i < N; ++i) {
+      v2.emplace_back(i);
+    }
+  };
+
+  auto push_back_time_seconds = utilities::perftimer<>::duration_seconds(push_back_func);
+  auto emplace_back_time_seconds = utilities::perftimer<>::duration_seconds(emplace_back_func);
+
+  std::cout << "push back took: "
+            << push_back_time_seconds
+            << " secs\nemplace back took: "
+            << emplace_back_time_seconds
+            << " secs\n";
+
+  ASSERT_EQ(N, v1.size());
+  ASSERT_EQ(N, v2.size());
+  ASSERT_LT(emplace_back_time_seconds, push_back_time_seconds);
+}
 ////////////////////////////////////////////////////////////////////////////////
 #pragma clang diagnostic pop
 // END: ignore the warnings when compiled with clang up to here
