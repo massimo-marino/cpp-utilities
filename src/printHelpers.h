@@ -214,7 +214,7 @@ printTuple(std::basic_ostream<Ch,Tr>& os,
            const Tuple& t,
            std::index_sequence<Is...>)
 {
-  ((os << (Is == 0? "" : ", ") << std::get<Is>(t)), ...);
+  ((os << (Is == 0 ? "" : ", ") << std::get<Is>(t)), ...);
 }
 }  // namespace utilities
 
@@ -280,7 +280,7 @@ operator<<(std::ostream &os, const std::vector<T>& v)
   return os;
 }
 
-// overload << stream operator for std::vector's
+// overload << stream operator for std::deque's
 template <typename T>
 std::ostream&
 operator<<(std::ostream &os, const std::deque<T>& v);
@@ -305,6 +305,7 @@ operator<<(std::ostream &os, const std::deque<T>& v)
   return os;
 }
 
+// overload << stream operator for std::tuple's
 template<class Ch, class Tr, class... Args>
 decltype(auto)
 operator<<(std::basic_ostream<Ch, Tr>& os, const std::tuple<Args...>& t);

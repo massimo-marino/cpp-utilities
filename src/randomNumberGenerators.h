@@ -58,7 +58,7 @@ getRandomFP(T min, T max) noexcept
   std::seed_seq seed_seq {rd(), rd(), rd(), rd(), rd(), rd()};
   static std::mt19937 gen {seed_seq};
 
-  static std::uniform_real_distribution<> dis(min, max);
+  static std::uniform_real_distribution<T> dis(min, max);
 
   return dis(gen);
 }
@@ -78,11 +78,11 @@ getRandomINT(const T min, const T max) noexcept
   // will be used to obtain a seed for the random number engine
   std::random_device rd;
 
-  //Standard mersenne_twister_engine seeded with rd()
+  // standard mersenne_twister_engine seeded with rd()
   std::seed_seq seed_seq {rd(), rd(), rd(), rd(), rd(), rd()};
   static std::mt19937 gen {seed_seq};
 
-  static std::uniform_int_distribution<> dis(min, max);
+  static std::uniform_int_distribution<T> dis(min, max);
 
   return dis(gen);
 }

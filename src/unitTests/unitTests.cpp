@@ -319,6 +319,9 @@ TEST(printTuples, test_printTuples)
   std::cout << std::endl;
   // use of overloaded operator<<() for tuples
   std::cout << t << std::endl;
+
+  std::tuple<> emptyTuple{};
+  std::cout << emptyTuple << std::endl;
 }
 
 TEST(convertArrayToTuple, test_convertArrayToTuple)
