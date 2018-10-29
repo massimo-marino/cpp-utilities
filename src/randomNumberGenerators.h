@@ -58,7 +58,7 @@ getRandomFP(T min, T max) noexcept
   std::seed_seq seed_seq {rd(), rd(), rd(), rd(), rd(), rd()};
   static std::mt19937 gen {seed_seq};
 
-  static std::uniform_real_distribution<T> dis(min, max);
+  std::uniform_real_distribution<T> dis(min, max);
 
   return dis(gen);
 }
@@ -82,7 +82,7 @@ getRandomINT(const T min, const T max) noexcept
   std::seed_seq seed_seq {rd(), rd(), rd(), rd(), rd(), rd()};
   static std::mt19937 gen {seed_seq};
 
-  static std::uniform_int_distribution<T> dis(min, max);
+  std::uniform_int_distribution<T> dis(min, max);
 
   return dis(gen);
 }
