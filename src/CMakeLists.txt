@@ -6,10 +6,16 @@ PROJECT(${THE_PROJECT})
 SET (LIBRARY_NAME utilities)
 
 ################################################################################
+#### settings for clang 7.0.0
+SET (CMAKE_CXX_COMPILER "/clang_7.0.0/bin/clang++")
+#SET (CMAKE_CXX_STANDARD 17)
+SET (CMAKE_INCLUDE_PATH "-I/clang_7.0.0/include/c++/v1 -I." )
+################################################################################
 #### settings for clang 5.0
-SET (CMAKE_CXX_COMPILER "/clang_5.0.0/bin/clang++-5.0")
+#SET (CMAKE_CXX_COMPILER "/clang_5.0.0/bin/clang++-5.0")
+#SET (CMAKE_INCLUDE_PATH "-I/clang_5.0.0/include/c++/v1 -I." )
+################################################################################
 SET (CMAKE_EXPORT_COMPILE_COMMANDS on)
-SET (CMAKE_INCLUDE_PATH "-I/clang_5.0.0/include/c++/v1 -I." )
 SET (CLANG_CXX_FLAGS "${CMAKE_INCLUDE_PATH} -std=c++17 -Ofast -ffast-math -pthread -pedantic -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -fno-assume-sane-operator-new")
 ####SET (CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -fsanitize=undefined")
 SET (CMAKE_CXX_FLAGS "${CLANG_CXX_FLAGS} -mtune=native -march=native -m64") # -lm -lpthread")

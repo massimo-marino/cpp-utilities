@@ -534,6 +534,25 @@ TEST(strTokenizers, strTokenize_1_2)
   ASSERT_EQ(tokens[8], "1325");
 }
 
+TEST(strTokenizers, strTokenize_2_0)
+{
+  using container = std::vector<std::string>;
+  const std::string s {"21-256-5-3-500x500"};
+  container tokens {};
+
+  tokens = utilities::strTokenize<container>(s, "-x");
+  for(auto&& t : tokens)
+  {
+    std::cout << "'" << t << "'\n";
+  }
+  ASSERT_EQ(tokens[0], "21");
+  ASSERT_EQ(tokens[1], "256");
+  ASSERT_EQ(tokens[2], "5");
+  ASSERT_EQ(tokens[3], "3");
+  ASSERT_EQ(tokens[4], "500");
+  ASSERT_EQ(tokens[5], "500");
+}
+
 TEST(strTokenizers, strTokenize_2_1)
 {
   using container = std::vector<std::string>;
