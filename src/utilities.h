@@ -7,6 +7,7 @@
 #pragma once
 
 #include "cfile_helper.h"
+#include "bracketedLog.h"
 #include "concurrentLogging.h"
 #include "containerHelpers.h"
 #include "hasMember.h"

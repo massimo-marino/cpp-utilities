@@ -28,7 +28,10 @@ SET (CMAKE_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
 SET (CMAKE_VERBOSE_MAKEFILE on )
 SET (BUILD_SHARED_LIBS ON)
 
-SET( SOURCES_LIST utilities.cpp cfile_helper.cpp concurrentLogging.cpp stringTokenizers.cpp printHelpers.cpp printHelpers.h tprintf.cpp containerHelpers.h hasMember.h is_string.h perfTimer.h randomNumberGenerators.h vectorHelpers.h conversions.h )
+SET( SOURCES_LIST utilities.cpp cfile_helper.cpp concurrentLogging.cpp
+     stringTokenizers.cpp printHelpers.cpp printHelpers.h tprintf.cpp
+     containerHelpers.h hasMember.h is_string.h perfTimer.h
+     randomNumberGenerators.h vectorHelpers.h conversions.h bracketedLog.h)
 
 ADD_LIBRARY( ${LIBRARY_NAME} ${SOURCES_LIST} )
 

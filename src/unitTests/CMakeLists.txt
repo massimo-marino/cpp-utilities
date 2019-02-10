@@ -27,7 +27,7 @@ SET (CMAKE_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
 
 SET (CMAKE_VERBOSE_MAKEFILE on )
 
-SET (SOURCES_TO_BE_TESTED ../utilities.cpp ../cfile_helper.cpp ../concurrentLogging.cpp ../stringTokenizers.cpp ../printHelpers.cpp ../printHelpers.h ../tprintf.cpp ../containerHelpers.h ../hasMember.h ../is_string.h ../perfTimer.h ../randomNumberGenerators.h ../vectorHelpers.h ../conversions.h )
+SET (SOURCES_TO_BE_TESTED ../utilities.cpp ../cfile_helper.cpp ../concurrentLogging.cpp ../stringTokenizers.cpp ../printHelpers.cpp ../printHelpers.h ../tprintf.cpp ../containerHelpers.h ../hasMember.h ../is_string.h ../perfTimer.h ../randomNumberGenerators.h ../vectorHelpers.h ../conversions.h ../bracketedLog.h)
 SET (UNIT_TESTS_SOURCES unitTests.cpp )
 SET (SOURCES_LIST ${UNIT_TESTS_SOURCES} ${SOURCES_TO_BE_TESTED} )
 SET (OBJ_EXECUTABLE unitTests)
